@@ -17,7 +17,6 @@
  * under the License.
  */
 import { DataRecordValue, SetDataMaskHook } from '@superset-ui/core';
-import { EchartsLegendFormData } from '@superset-ui/plugin-chart-echarts/lib/types';
 import { EChartsOption } from 'echarts';
 import { TooltipMarker } from 'echarts/types/src/util/format';
 
@@ -53,6 +52,13 @@ export enum LegendType {
   Scroll = 'scroll',
   Plain = 'plain',
 }
+
+export type EchartsLegendFormData = {
+  legendMargin: number | null | string;
+  legendOrientation: LegendOrientation;
+  legendType: LegendType;
+  showLegend: boolean;
+};
 
 export type ProphetValue = {
   marker: TooltipMarker;
