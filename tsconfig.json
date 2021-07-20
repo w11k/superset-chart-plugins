@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "plugin-chart-scatter"
+    }
+  ],
+  "extends": "./tsconfig.options.json"
+}
