@@ -17,6 +17,7 @@
  * under the License.
  */
 import { DataRecordValue, SetDataMaskHook } from '@superset-ui/core';
+import { EchartsLegendFormData } from '@superset-ui/plugin-chart-echarts/lib/types';
 import { EChartsOption } from 'echarts';
 import { TooltipMarker } from 'echarts/types/src/util/format';
 
@@ -59,13 +60,6 @@ export type ProphetValue = {
   forecastTrend?: number;
   forecastLower?: number;
   forecastUpper?: number;
-};
-
-export type EchartsLegendFormData = {
-  legendMargin: number | null | string;
-  legendOrientation: LegendOrientation;
-  legendType: LegendType;
-  showLegend: boolean;
 };
 
 export const DEFAULT_LEGEND_FORM_DATA: EchartsLegendFormData = {
