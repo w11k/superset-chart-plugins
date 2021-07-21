@@ -46,6 +46,8 @@ export type EchartsScatterFormData = QueryFormData &
     numberFormat: string;
     dateFormat: string;
     emitFilter: boolean;
+    maxBubbleSize: string;
+    minBubbleSize: string;
     x: string;
     y: string;
     size: string;

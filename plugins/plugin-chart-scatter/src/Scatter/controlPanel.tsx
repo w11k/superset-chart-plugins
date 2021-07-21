@@ -36,12 +36,23 @@ const config: ControlPanelConfig = {
       label: t('Query'),
       expanded: true,
       controlSetRows: [
-        ['series'],
-        ['entity'],
         ['x'],
         ['y'],
+        ['groupby'],
         ['adhoc_filters'],
         ['size'],
+        [
+          {
+            name: 'min_bubble_size',
+            config: {
+              type: 'SelectControl',
+              freeForm: true,
+              label: t('Min Bubble Size'),
+              default: '5',
+              choices: formatSelectOptions(['5', '10', '15', '25', '50', '75', '100']),
+            },
+          },
+        ],
         [
           {
             name: 'max_bubble_size',

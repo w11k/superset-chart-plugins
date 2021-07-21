@@ -19,6 +19,7 @@
 import { DataRecordValue, getMetricLabel } from '@superset-ui/core';
 import { defaultGrid } from '@superset-ui/plugin-chart-echarts/lib/defaults';
 import {
+  extractGroupbyLabel,
   getColtypesMapping,
   getLegendProps,
 } from '@superset-ui/plugin-chart-echarts/lib/utils/series';
@@ -50,6 +51,8 @@ export default function transformProps(
     y,
     size,
     entity,
+    maxBubbleSize,
+    minBubbleSize,
     // metrics = [],
     metric = '',
   }: EchartsScatterFormData = {
@@ -100,7 +103,12 @@ export default function transformProps(
   const transformedData: any[] = [];
   rawData.forEach(datum => {
     // generate transformedData
-    transformedData.push([datum[x], datum[y], datum[size], datum[entity]]);
+    const joinedName = extractGroupbyLabel({
+      datum,
+      groupby,
+      coltypeMapping,
+    });
+    transformedData.push([datum[x], datum[y], datum[size], joinedName]);
     // transformedData.push({
     //   value: [datum[x], datum[y], datum[size], datum[entity]],
     //   name: datum[entity],
@@ -123,6 +131,21 @@ export default function transformProps(
 
   const regressionData = ecStat.regression('polynomial', transformedData, 3);
 
+  const maxSize = parseInt(maxBubbleSize, 10);
+  const minSize = parseInt(minBubbleSize, 10);
+  const minValue = transformedData.reduce((result, datum) => Math.min(result, datum[2]), 0);
+  const maxValue = transformedData.reduce((result, datum) => Math.max(result, datum[2]), 0);
+
+  function projectNumberToBubbleSize(
+    value: number,
+    in_min: number,
+    in_max: number,
+    out_min: number,
+    out_max: number,
+  ) {
+    return ((value - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+  }
+
   const series: ScatterSeriesOption[] = [
     {
       type: 'scatter',
@@ -134,9 +157,10 @@ export default function transformProps(
           backgroundColor: 'white',
         },
       },
-      // symbolSize: data => {
-      //   return Math.sqrt(data[2]) / 5e2;
-      // },
+      symbolSize: data => {
+        const size = data[2];
+        return projectNumberToBubbleSize(size, minValue, maxValue, minSize, maxSize);
+      },
     },
   ];
 
