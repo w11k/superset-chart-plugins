@@ -16,18 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { buildQueryContext, getMetricLabel, QueryFormData } from '@superset-ui/core';
+import { buildQueryContext, QueryFormData } from '@superset-ui/core';
 
 export default function buildQuery(formData: QueryFormData) {
-  const { metric, sort_by_metric } = formData;
-  return buildQueryContext(formData, baseQueryObject => {
-    const metricLabels = (baseQueryObject.metrics || []).map(getMetricLabel);
-    console.log('metricLabels', metricLabels, baseQueryObject);
-    return [
-      {
-        ...baseQueryObject,
-        ...(sort_by_metric && { orderby: [[metric, false]] }),
-      },
-    ];
-  });
+  return buildQueryContext(formData, baseQueryObject => [
+    {
+      ...baseQueryObject,
+    },
+  ]);
 }

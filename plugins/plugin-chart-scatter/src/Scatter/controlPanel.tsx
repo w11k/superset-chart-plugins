@@ -22,7 +22,6 @@ import {
   ControlPanelConfig,
   D3_FORMAT_OPTIONS,
   formatSelectOptions,
-  sections,
 } from '@superset-ui/chart-controls';
 import { DEFAULT_FORM_DATA } from './types';
 import { legendSection } from '../controls';
@@ -31,7 +30,6 @@ const { numberFormat, showLabels, emitFilter } = DEFAULT_FORM_DATA;
 
 const config: ControlPanelConfig = {
   controlPanelSections: [
-    sections.legacyRegularTime,
     {
       label: t('Query'),
       expanded: true,
@@ -40,6 +38,8 @@ const config: ControlPanelConfig = {
         ['y'],
         ['groupby'],
         ['adhoc_filters'],
+        ['limit', null],
+        [<h1 className="section-header">{t('Bubble')}</h1>],
         ['size'],
         [
           {
@@ -65,7 +65,6 @@ const config: ControlPanelConfig = {
             },
           },
         ],
-        ['limit', null],
       ],
     },
     {
