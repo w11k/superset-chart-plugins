@@ -1,8 +1,8 @@
-## @superset-ui/plugin-chart-w11k
+## @w11k/plugin-chart-scatter
 
-[![Version](https://img.shields.io/npm/v/@superset-ui/plugin-chart-w11k.svg?style=flat-square)](https://www.npmjs.com/package/@superset-ui/plugin-chart-w11k)
+[![Version](https://img.shields.io/npm/v/@w11k/plugin-chart-scatter.svg?style=flat-square)](https://www.npmjs.com/package/@w11k/plugin-chart-scatter)
 
-This plugin provides W11K Test for Superset.
+This plugin provides a Scatter Chart for Superset.
 
 ### Usage
 
@@ -10,18 +10,16 @@ Configure `key`, which can be any `string`, and register the plugin. This `key` 
 lookup this chart throughout the app.
 
 ```js
-import W11KChartPlugin from '@superset-ui/plugin-chart-w11k';
+import EchartsScatterChartPlugin from '@w11k/plugin-chart-scatter';
 
-new W11KChartPlugin().configure({ key: 'w11k' }).register();
+new EchartsScatterChartPlugin().configure({ key: 'scatter' }).register();
 ```
 
-Then use it via `SuperChart`. See
-[storybook](https://apache-superset.github.io/superset-ui/?selectedKind=plugin-chart-w11k) for more
-details.
+Then use it via `SuperChart`
 
 ```js
 <SuperChart
-  chartType="w11k"
+  chartType="scatter"
   width={600}
   height={600}
   formData={...}
@@ -31,22 +29,25 @@ details.
 />
 ```
 
-### File structure generated
+### File structure
 
 ```
 ├── package.json
 ├── README.md
 ├── tsconfig.json
 ├── src
-│   ├── W11K.tsx
 │   ├── images
 │   │   └── thumbnail.png
-│   ├── index.ts
 │   ├── plugin
 │   │   ├── buildQuery.ts
 │   │   ├── controlPanel.ts
+│   │   ├── EchartsScatter.tsx
 │   │   ├── index.ts
 │   │   └── transformProps.ts
+│   │   └── types.ts
+│   ├── controls.ts
+│   ├── defaults.ts
+│   ├── index.ts
 │   └── types.ts
 ├── test
 │   └── index.test.ts
