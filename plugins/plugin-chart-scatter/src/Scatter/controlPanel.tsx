@@ -24,7 +24,7 @@ import {
   formatSelectOptions,
 } from '@superset-ui/chart-controls';
 import { DEFAULT_FORM_DATA } from './types';
-import { legendSection } from '../controls';
+import { legendSection, regressionSection } from '../controls';
 
 const { numberFormat, showLabels, emitFilter } = DEFAULT_FORM_DATA;
 
@@ -65,6 +65,7 @@ const config: ControlPanelConfig = {
             },
           },
         ],
+        ...regressionSection,
       ],
     },
     {

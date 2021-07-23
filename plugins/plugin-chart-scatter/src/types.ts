@@ -58,6 +58,8 @@ export type EchartsLegendFormData = {
   legendOrientation: LegendOrientation;
   legendType: LegendType;
   showLegend: boolean;
+  showRegression: boolean;
+  regression: 'linear' | 'exponential' | 'logarithmic' | 'polynomial';
 };
 
 export type ProphetValue = {
@@ -73,6 +75,8 @@ export const DEFAULT_LEGEND_FORM_DATA: EchartsLegendFormData = {
   legendOrientation: LegendOrientation.Top,
   legendType: LegendType.Scroll,
   showLegend: false,
+  showRegression: false,
+  regression: 'linear',
 };
 
 export type EventHandlers = Record<string, { (props: any): void }>;

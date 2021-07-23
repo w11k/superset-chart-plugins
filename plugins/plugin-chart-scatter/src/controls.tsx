@@ -21,7 +21,8 @@ import { DEFAULT_LEGEND_FORM_DATA } from './types';
  * specific language governing permissions and limitations
  * under the License.
  */
-const { legendMargin, legendOrientation, legendType, showLegend } = DEFAULT_LEGEND_FORM_DATA;
+const { legendMargin, legendOrientation, legendType, showLegend, showRegression, regression } =
+  DEFAULT_LEGEND_FORM_DATA;
 
 const showLegendControl = {
   name: 'show_legend',
@@ -92,4 +93,41 @@ export const legendSection = [
   [legendTypeControl],
   [legendOrientationControl],
   [legendMarginControl],
+];
+
+const showRegressionControl = {
+  name: 'show_regression',
+  config: {
+    type: 'CheckboxControl',
+    label: t('Show regression'),
+    renderTrigger: true,
+    default: showRegression,
+    description: t('Whether to display a regression for the chart'),
+  },
+};
+
+const regressionSelectControl = {
+  name: 'regression',
+  config: {
+    type: 'SelectControl',
+    freeForm: false,
+    label: 'Regression',
+    choices: [
+      ['linear', 'Linear'],
+      ['exponential', 'Exponential'],
+      ['logarithmic', 'Logarithmic'],
+      ['polynomial', 'Polynomial'],
+    ],
+    default: regression,
+    renderTrigger: true,
+    description: t('Regression'),
+    visibility: ({ controls }: ControlPanelsContainerProps) =>
+      Boolean(controls?.show_regression?.value),
+  },
+};
+
+export const regressionSection = [
+  [<h1 className="section-header">{t('Regression')}</h1>],
+  [showRegressionControl],
+  [regressionSelectControl],
 ];
