@@ -18,12 +18,12 @@
  */
 import React from 'react';
 import Echart from '@superset-ui/plugin-chart-echarts/lib/components/Echart';
-import { RadarChartTransformedProps } from './types';
+import { ScatterChartTransformedProps } from './types';
 
 export default function EchartsScatter({
   height,
   width,
   echartOptions,
-}: RadarChartTransformedProps) {
+}: ScatterChartTransformedProps) {
   return <Echart height={height} width={width} echartOptions={echartOptions} />;
 }

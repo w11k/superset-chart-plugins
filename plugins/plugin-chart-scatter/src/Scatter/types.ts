@@ -25,15 +25,9 @@ import {
 } from '@superset-ui/core';
 import { DEFAULT_LEGEND_FORM_DATA, EchartsLegendFormData } from '../types';
 
-type RadarColumnConfig = Record<string, { radarMetricMaxValue?: number }>;
-
 export type EchartsScatterFormData = QueryFormData &
   EchartsLegendFormData & {
     colorScheme?: string;
-    columnConfig?: RadarColumnConfig;
-    currentOwnValue?: string[] | null;
-    currentValue?: string[] | null;
-    defaultValue?: string[] | null;
     groupby: string[];
     metrics: QueryFormMetric[];
     showLabels: boolean;
@@ -61,8 +55,7 @@ export interface EchartsScatterChartProps extends ChartProps {
   queriesData: ChartDataResponseResult[];
 }
 
-// @ts-ignore
-export const DEFAULT_FORM_DATA: EchartsScatterFormData = {
+export const DEFAULT_FORM_DATA: Partial<EchartsScatterFormData> = {
   ...DEFAULT_LEGEND_FORM_DATA,
   groupby: [],
   showLabels: false,
@@ -77,7 +70,7 @@ export const DEFAULT_FORM_DATA: EchartsScatterFormData = {
   emitFilter: false,
 };
 
-export interface RadarChartTransformedProps {
+export interface ScatterChartTransformedProps {
   formData: EchartsScatterFormData;
   height: number;
   width: number;

@@ -34,7 +34,7 @@ import {
   DEFAULT_FORM_DATA,
   EchartsScatterChartProps,
   EchartsScatterFormData,
-  RadarChartTransformedProps,
+  ScatterChartTransformedProps,
 } from './types';
 import { DEFAULT_LEGEND_FORM_DATA } from '../types';
 
@@ -42,7 +42,7 @@ registerTransform(transform.regression);
 
 export default function transformProps(
   chartProps: EchartsScatterChartProps,
-): RadarChartTransformedProps {
+): ScatterChartTransformedProps {
   const { formData, height, width, queriesData } = chartProps;
   const coltypeMapping = getColtypesMapping(queriesData[0]);
 
