@@ -61,6 +61,7 @@ export type EchartsLegendFormData = {
   showLabels: boolean;
   showHighlighting: boolean;
   showRegression: boolean;
+  showRegressionLabel: boolean;
   regression: 'linear' | 'exponential' | 'logarithmic' | 'polynomial';
 };
 
@@ -80,6 +81,7 @@ export const DEFAULT_LEGEND_FORM_DATA: EchartsLegendFormData = {
   showLabels: false,
   showHighlighting: false,
   showRegression: false,
+  showRegressionLabel: false,
   regression: 'linear',
 };
 

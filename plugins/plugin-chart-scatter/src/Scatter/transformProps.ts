@@ -55,6 +55,7 @@ export default function transformProps(
     metric = '',
     regression,
     showRegression,
+    showRegressionLabel,
     showHighlighting,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
@@ -128,6 +129,9 @@ export default function transformProps(
     datasetIndex: scatterSeries.length + 1,
     symbolSize: 0.1,
     symbol: 'circle',
+    label: {
+      show: showRegressionLabel,
+    },
     labelLayout: { dx: -20 },
     encode: { label: 2, tooltip: 1 },
   };

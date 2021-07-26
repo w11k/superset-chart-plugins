@@ -28,6 +28,7 @@ const {
   showLabels,
   showLegend,
   showRegression,
+  showRegressionLabel,
   regression,
   showHighlighting,
 } = DEFAULT_LEGEND_FORM_DATA;
@@ -114,6 +115,17 @@ const showRegressionControl = {
   },
 };
 
+const showRegressionLabelControl = {
+  name: 'show_regression_label',
+  config: {
+    type: 'CheckboxControl',
+    label: t('Show regression label'),
+    renderTrigger: true,
+    default: showRegressionLabel,
+    description: t('Whether to display the regression label'),
+  },
+};
+
 const regressionSelectControl = {
   name: 'regression',
   config: {
@@ -137,6 +149,7 @@ const regressionSelectControl = {
 export const regressionSection = [
   [<h1 className="section-header">{t('Regression')}</h1>],
   [showRegressionControl],
+  [showRegressionLabelControl],
   [regressionSelectControl],
 ];
 
