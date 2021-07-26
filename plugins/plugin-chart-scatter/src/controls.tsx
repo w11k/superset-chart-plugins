@@ -1,7 +1,7 @@
 import React from 'react';
 import { t } from '@superset-ui/core';
-import { ControlPanelsContainerProps } from '@superset-ui/chart-controls';
-import { DEFAULT_LEGEND_FORM_DATA } from './types';
+import { ControlPanelsContainerProps, sharedControls } from '@superset-ui/chart-controls';
+import { DEFAULT_FORM_DATA } from './Scatter/types';
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,7 +31,7 @@ const {
   showRegressionLabel,
   regression,
   showHighlighting,
-} = DEFAULT_LEGEND_FORM_DATA;
+} = DEFAULT_FORM_DATA;
 
 const showLegendControl = {
   name: 'show_legend',
@@ -123,6 +123,8 @@ const showRegressionLabelControl = {
     renderTrigger: true,
     default: showRegressionLabel,
     description: t('Whether to display the regression label'),
+    visibility: ({ controls }: ControlPanelsContainerProps) =>
+      Boolean(controls?.show_regression?.value),
   },
 };
 
@@ -180,6 +182,56 @@ export const highlightingSection = [
         renderTrigger: true,
         default: showHighlighting,
         description: t('Whether to highlight cluster on selection.'),
+      },
+    },
+  ],
+];
+
+export const yAxisControls = [
+  [<h1 className="section-header">{t('Y Axis')}</h1>],
+  [
+    {
+      name: `y_axis_format`,
+      config: {
+        ...sharedControls.y_axis_format,
+        label: t('y-axis format'),
+      },
+    },
+  ],
+  [
+    {
+      name: 'yAxisTitle',
+      config: {
+        type: 'TextControl',
+        label: t('Y Axis title'),
+        renderTrigger: true,
+        default: '',
+        description: t('Title for y-axis'),
+      },
+    },
+  ],
+];
+
+export const xAxisControls = [
+  [<h1 className="section-header">{t('X Axis')}</h1>],
+  [
+    {
+      name: `x_axis_format`,
+      config: {
+        ...sharedControls.y_axis_format,
+        label: t('x-axis format'),
+      },
+    },
+  ],
+  [
+    {
+      name: 'xAxisTitle',
+      config: {
+        type: 'TextControl',
+        label: t('X Axis title'),
+        renderTrigger: true,
+        default: '',
+        description: t('Title for X-axis'),
       },
     },
   ],

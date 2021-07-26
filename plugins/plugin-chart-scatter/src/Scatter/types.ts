@@ -23,12 +23,7 @@ import {
   QueryFormData,
   QueryFormMetric,
 } from '@superset-ui/core';
-import {
-  DEFAULT_LEGEND_FORM_DATA,
-  EchartsLegendFormData,
-  LegendOrientation,
-  LegendType,
-} from '../types';
+import { DEFAULT_LEGEND_FORM_DATA, EchartsLegendFormData } from '../types';
 
 type RadarColumnConfig = Record<string, { radarMetricMaxValue?: number }>;
 
@@ -42,9 +37,6 @@ export type EchartsScatterFormData = QueryFormData &
     groupby: string[];
     metrics: QueryFormMetric[];
     showLabels: boolean;
-    isCircle: boolean;
-    numberFormat: string;
-    dateFormat: string;
     emitFilter: boolean;
     maxBubbleSize: string;
     minBubbleSize: string;
@@ -53,6 +45,15 @@ export type EchartsScatterFormData = QueryFormData &
     size: string;
     series: string;
     entity: string;
+
+    showHighlighting: boolean;
+    xAxisLabel: string;
+    xAxisFormat: string;
+    yAxisLabel: string;
+    yAxisFormat: string;
+    showRegression: boolean;
+    showRegressionLabel: boolean;
+    regression: 'linear' | 'exponential' | 'logarithmic' | 'polynomial';
   };
 
 export interface EchartsScatterChartProps extends ChartProps {
@@ -64,13 +65,16 @@ export interface EchartsScatterChartProps extends ChartProps {
 export const DEFAULT_FORM_DATA: EchartsScatterFormData = {
   ...DEFAULT_LEGEND_FORM_DATA,
   groupby: [],
-  legendOrientation: LegendOrientation.Top,
-  legendType: LegendType.Scroll,
-  numberFormat: 'SMART_NUMBER',
-  showLabels: true,
+  showLabels: false,
+  showHighlighting: false,
+  xAxisLabel: '',
+  xAxisFormat: '',
+  yAxisLabel: '',
+  yAxisFormat: '',
+  showRegression: false,
+  showRegressionLabel: false,
+  regression: 'linear',
   emitFilter: false,
-  dateFormat: 'smart_date',
-  isCircle: false,
 };
 
 export interface RadarChartTransformedProps {

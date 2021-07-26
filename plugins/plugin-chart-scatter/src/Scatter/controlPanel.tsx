@@ -20,7 +20,14 @@ import React from 'react';
 import { FeatureFlag, isFeatureEnabled, t } from '@superset-ui/core';
 import { ControlPanelConfig, formatSelectOptions } from '@superset-ui/chart-controls';
 import { DEFAULT_FORM_DATA } from './types';
-import { highlightingSection, labelsSection, legendSection, regressionSection } from '../controls';
+import {
+  highlightingSection,
+  labelsSection,
+  legendSection,
+  regressionSection,
+  xAxisControls,
+  yAxisControls,
+} from '../controls';
 
 const { emitFilter } = DEFAULT_FORM_DATA;
 
@@ -34,7 +41,6 @@ const config: ControlPanelConfig = {
         ['y'],
         ['groupby'],
         ['adhoc_filters'],
-        ['limit', null],
         [<h1 className="section-header">{t('Bubble')}</h1>],
         ['size'],
         [
@@ -84,6 +90,8 @@ const config: ControlPanelConfig = {
             ]
           : [],
         ...legendSection,
+        ...xAxisControls,
+        ...yAxisControls,
         ...labelsSection,
         ...highlightingSection,
       ],

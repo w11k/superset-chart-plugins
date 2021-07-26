@@ -16,7 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { CategoricalColorNamespace, DataRecord, getMetricLabel } from '@superset-ui/core';
+import {
+  CategoricalColorNamespace,
+  DataRecord,
+  getMetricLabel,
+  getNumberFormatter,
+} from '@superset-ui/core';
 import { defaultGrid } from '@superset-ui/plugin-chart-echarts/lib/defaults';
 import {
   getColtypesMapping,
@@ -26,7 +31,7 @@ import { EChartsOption, LineSeriesOption, registerTransform, ScatterSeriesOption
 import { transform } from 'echarts-stat';
 import { DatasetOption, TopLevelFormatterParams } from 'echarts/types/dist/shared';
 import {
-  DEFAULT_FORM_DATA as DEFAULT_RADAR_FORM_DATA,
+  DEFAULT_FORM_DATA,
   EchartsScatterChartProps,
   EchartsScatterFormData,
   RadarChartTransformedProps,
@@ -57,9 +62,13 @@ export default function transformProps(
     showRegression,
     showRegressionLabel,
     showHighlighting,
+    xAxisTitle,
+    xAxisFormat,
+    yAxisTitle,
+    yAxisFormat,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
-    ...DEFAULT_RADAR_FORM_DATA,
+    ...DEFAULT_FORM_DATA,
     ...formData,
   };
   const metricsLabel = getMetricLabel(metric);
@@ -102,11 +111,9 @@ export default function transformProps(
     datum[size],
     ...groupby.map(group => datum[group]),
   ]);
-  console.log('sourceDataSet', sourceDataSet);
 
   const allGroups = rawData.map(datum => datum[groupby[0]] as string);
   const uniqueGroups = Array.from(new Set(allGroups).values());
-  console.log('uniqueGroups', uniqueGroups);
 
   const scatterTransforms: DatasetOption[] = [];
   const scatterSeries: ScatterSeriesOption[] = [];
@@ -155,6 +162,9 @@ export default function transformProps(
     transforms.push(regressionTransform);
   }
 
+  const xAxisFormatter = getNumberFormatter(xAxisFormat);
+  const yAxisFormatter = getNumberFormatter(yAxisFormat);
+
   const echartOptions: EChartsOption = {
     grid: {
       ...defaultGrid,
@@ -162,8 +172,14 @@ export default function transformProps(
     legend: {
       ...getLegendProps(legendType, legendOrientation, showLegend),
     },
-    xAxis: {},
-    yAxis: {},
+    xAxis: {
+      name: xAxisTitle,
+      axisLabel: { formatter: xAxisFormatter },
+    },
+    yAxis: {
+      name: yAxisTitle,
+      axisLabel: { formatter: yAxisFormatter },
+    },
     series,
     visualMap: {
       show: false,
