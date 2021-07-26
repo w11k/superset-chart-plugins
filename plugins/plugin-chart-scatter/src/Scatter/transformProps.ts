@@ -34,6 +34,7 @@ import {
 import { DEFAULT_LEGEND_FORM_DATA } from '../types';
 
 registerTransform(transform.regression);
+registerTransform(transform.clustering);
 
 export default function transformProps(
   chartProps: EchartsScatterChartProps,
@@ -83,7 +84,7 @@ export default function transformProps(
     return {
       name: seriesName,
       type: 'scatter',
-      datasetIndex,
+      datasetIndex: 1,
       animation: false,
       emphasis: {
         focus: 'series',
@@ -129,9 +130,9 @@ export default function transformProps(
     encode: { label: 2, tooltip: 1 },
   };
 
-  const series: (ScatterSeriesOption | LineSeriesOption)[] = [...scatterSeries];
+  const series: (ScatterSeriesOption | LineSeriesOption)[] = [scatterSeries[0]];
   if (showRegression) {
-    series.push(regressionSeries);
+    // series.push(regressionSeries);
   }
 
   const regressionTransform = {
@@ -143,10 +144,21 @@ export default function transformProps(
     },
   };
 
-  const transforms: DatasetOption[] = [...scatterTransforms];
+  const transforms: DatasetOption[] = [scatterTransforms[0]];
   if (showRegression) {
-    transforms.push(regressionTransform);
+    // transforms.push(regressionTransform);
   }
+
+  const CLUSTER_COUNT = 4;
+  const pieces = [];
+  for (let i = 0; i < CLUSTER_COUNT; i++) {
+    pieces.push({
+      value: i,
+      label: `Cluster ${i}`,
+      color: colorFn(i),
+    });
+  }
+  const DIMENSION_CLUSTER_INDEX = 4;
 
   const echartOptions: EChartsOption = {
     grid: {
@@ -159,10 +171,12 @@ export default function transformProps(
     yAxis: {},
     series,
     visualMap: {
-      show: false,
-      dimension: 2,
+      type: 'piecewise',
+      top: 'middle',
+      dimension: DIMENSION_CLUSTER_INDEX,
       min: minValue,
       max: maxValue,
+      pieces,
       seriesIndex: [0, 1],
       inRange: {
         symbolSize: [minSize, maxSize],
@@ -187,7 +201,18 @@ export default function transformProps(
       {
         source: sourceDataSet,
       },
-      ...transforms,
+      // ...transforms,
+      {
+        transform: {
+          type: 'ecStat:clustering',
+          config: {
+            dimensions: [0, 1],
+            clusterCount: CLUSTER_COUNT,
+            outputType: 'single',
+            outputClusterIndexDimension: DIMENSION_CLUSTER_INDEX,
+          },
+        },
+      },
     ],
   };
 
