@@ -55,6 +55,7 @@ export default function transformProps(
     metric = '',
     regression,
     showRegression,
+    showHighlighting,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
     ...DEFAULT_RADAR_FORM_DATA,
@@ -85,9 +86,11 @@ export default function transformProps(
       type: 'scatter',
       datasetIndex,
       animation: false,
-      emphasis: {
-        focus: 'series',
-      },
+      emphasis: showHighlighting
+        ? {
+            focus: 'series',
+          }
+        : undefined,
       color: colorFn(seriesName),
     };
   }

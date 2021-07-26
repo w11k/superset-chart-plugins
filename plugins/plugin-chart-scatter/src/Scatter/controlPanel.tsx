@@ -18,15 +18,11 @@
  */
 import React from 'react';
 import { FeatureFlag, isFeatureEnabled, t } from '@superset-ui/core';
-import {
-  ControlPanelConfig,
-  D3_FORMAT_OPTIONS,
-  formatSelectOptions,
-} from '@superset-ui/chart-controls';
+import { ControlPanelConfig, formatSelectOptions } from '@superset-ui/chart-controls';
 import { DEFAULT_FORM_DATA } from './types';
-import { legendSection, regressionSection } from '../controls';
+import { highlightingSection, labelsSection, legendSection, regressionSection } from '../controls';
 
-const { numberFormat, showLabels, emitFilter } = DEFAULT_FORM_DATA;
+const { emitFilter } = DEFAULT_FORM_DATA;
 
 const config: ControlPanelConfig = {
   controlPanelSections: [
@@ -88,35 +84,8 @@ const config: ControlPanelConfig = {
             ]
           : [],
         ...legendSection,
-        [<h1 className="section-header">{t('Labels')}</h1>],
-        [
-          {
-            name: 'show_labels',
-            config: {
-              type: 'CheckboxControl',
-              label: t('Show Labels'),
-              renderTrigger: true,
-              default: showLabels,
-              description: t('Whether to display the labels.'),
-            },
-          },
-        ],
-        [
-          {
-            name: 'number_format',
-            config: {
-              type: 'SelectControl',
-              freeForm: true,
-              label: t('Number format'),
-              renderTrigger: true,
-              default: numberFormat,
-              choices: D3_FORMAT_OPTIONS,
-              description: `${t('D3 format syntax: https://github.com/d3/d3-format. ')} ${t(
-                'Only applies when "Label Type" is set to show values.',
-              )}`,
-            },
-          },
-        ],
+        ...labelsSection,
+        ...highlightingSection,
       ],
     },
   ],
