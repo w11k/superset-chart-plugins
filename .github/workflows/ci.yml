@@ -1,0 +1,26 @@
+name: build-and-test-workflow
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - name: Install dependencies
+        run: yarn install
+      - name: Build packages
+        run: yarn build
+      - name: Run ESLint
+        run: yarn lint --quiet
+      - name: Run unit tests
+        run: yarn test

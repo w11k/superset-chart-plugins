@@ -1,6 +1,5 @@
 import { ChartProps } from '@superset-ui/core';
 import transformProps from '../../src/Scatter/transformProps';
-import { EchartsScatterChartProps } from '../../src/Scatter/types';
 
 describe('Scatter tranformProps', () => {
   const formData = {
