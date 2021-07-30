@@ -18,18 +18,65 @@
  */
 import React from 'react';
 import { FeatureFlag, isFeatureEnabled, t } from '@superset-ui/core';
-import { ControlPanelConfig, formatSelectOptions } from '@superset-ui/chart-controls';
-import { DEFAULT_FORM_DATA } from './types';
 import {
-  highlightingSection,
-  labelsSection,
-  legendSection,
-  regressionSection,
-  xAxisControls,
-  yAxisControls,
-} from '../controls';
+  ControlPanelConfig,
+  formatSelectOptions,
+  sharedControls,
+} from '@superset-ui/chart-controls';
+import { DEFAULT_FORM_DATA } from './types';
+import { highlightingSection, labelsSection, legendSection, regressionSection } from '../controls';
 
 const { emitFilter } = DEFAULT_FORM_DATA;
+
+const xAxisControls = [
+  [<h1 className="section-header">{t('X Axis')}</h1>],
+  [
+    {
+      name: `x_axis_format`,
+      config: {
+        ...sharedControls.y_axis_format,
+        label: t('x-axis format'),
+      },
+    },
+  ],
+  [
+    {
+      name: 'xAxisTitle',
+      config: {
+        type: 'TextControl',
+        label: t('X Axis title'),
+        renderTrigger: true,
+        default: '',
+        description: t('Title for X-axis'),
+      },
+    },
+  ],
+];
+
+const yAxisControls = [
+  [<h1 className="section-header">{t('Y Axis')}</h1>],
+  [
+    {
+      name: `y_axis_format`,
+      config: {
+        ...sharedControls.y_axis_format,
+        label: t('y-axis format'),
+      },
+    },
+  ],
+  [
+    {
+      name: 'yAxisTitle',
+      config: {
+        type: 'TextControl',
+        label: t('Y Axis title'),
+        renderTrigger: true,
+        default: '',
+        description: t('Title for y-axis'),
+      },
+    },
+  ],
+];
 
 const config: ControlPanelConfig = {
   controlPanelSections: [
