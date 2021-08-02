@@ -74,19 +74,29 @@ export default function transformProps(
   const metricsLabel = getMetricLabel(metric);
   const rawData = queriesData[0].data;
 
+  const xField = getMetricLabel(x);
+  const yField = getMetricLabel(y);
+  const sizeField = getMetricLabel(size);
+
   const maxSize = parseInt(maxBubbleSize, 10);
   const minSize = parseInt(minBubbleSize, 10);
-  const minValue = rawData.reduce((result, datum) => Math.min(result, datum[size] as number), 0);
-  const maxValue = rawData.reduce((result, datum) => Math.max(result, datum[size] as number), 0);
+  const minValue = rawData.reduce(
+    (result, datum) => Math.min(result, datum[sizeField] as number),
+    0,
+  );
+  const maxValue = rawData.reduce(
+    (result, datum) => Math.max(result, datum[sizeField] as number),
+    0,
+  );
 
   console.log('data', queriesData); // eslint-disable-line no-console
   console.log('coltypeMapping', coltypeMapping); // eslint-disable-line no-console
   console.log('groupby', groupby); // eslint-disable-line no-console
   console.log('metricsLabel', metricsLabel); // eslint-disable-line no-console
   console.log('formData', formData); // eslint-disable-line no-console
-  console.log('xField', x); // eslint-disable-line no-console
-  console.log('yField', y); // eslint-disable-line no-console
-  console.log('sizeField', size); // eslint-disable-line no-console
+  console.log('xField', xField); // eslint-disable-line no-console
+  console.log('yField', yField); // eslint-disable-line no-console
+  console.log('sizeField', sizeField); // eslint-disable-line no-console
 
   const colorFn = CategoricalColorNamespace.getScale(colorScheme as string);
 
@@ -106,9 +116,9 @@ export default function transformProps(
   }
 
   const sourceDataSet: any[] = rawData.map((datum: DataRecord) => [
-    datum[x],
-    datum[y],
-    datum[size],
+    datum[xField],
+    datum[yField],
+    datum[sizeField],
     ...groupby.map(group => datum[group]),
   ]);
 
@@ -199,9 +209,9 @@ export default function transformProps(
           const { value, name } = params;
           const parsedValue = value as number[];
           return `${name}<br>
-                    ${x}：${parsedValue[1]}<br>
-                    ${y}：${parsedValue[0]}<br>
-                    ${size}：${parsedValue[2]}<br>`;
+                    ${xField}：${parsedValue[1]}<br>
+                    ${yField}：${parsedValue[0]}<br>
+                    ${sizeField}：${parsedValue[2]}<br>`;
         }
         throw new Error('cannot format tooltip');
       },

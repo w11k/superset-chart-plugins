@@ -34,11 +34,10 @@ export type EchartsScatterFormData = QueryFormData &
     emitFilter: boolean;
     maxBubbleSize: string;
     minBubbleSize: string;
-    x: string;
-    y: string;
-    size: string;
+    x: QueryFormMetric;
+    y: QueryFormMetric;
+    size: QueryFormMetric;
     series: string;
-    entity: string;
 
     showHighlighting: boolean;
     xAxisLabel: string;
