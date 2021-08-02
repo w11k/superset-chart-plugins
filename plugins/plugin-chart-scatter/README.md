@@ -2,7 +2,11 @@
 
 [![Version](https://img.shields.io/npm/v/@w11k/plugin-chart-scatter.svg?style=flat-square)](https://www.npmjs.com/package/@w11k/plugin-chart-scatter)
 
-This plugin provides a Scatter Chart for Superset.
+This plugin provides a Scatter Chart for Apache Superset.
+
+### Installation
+
+`npm install @w11k/plugin-chart-scatter`
 
 ### Usage
 

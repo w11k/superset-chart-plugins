@@ -45,10 +45,10 @@ export default class EchartsScatterChartPlugin extends ChartPlugin<
       loadChart: () => import('./EchartsScatter'),
       metadata: new ChartMetadata({
         behaviors: [Behavior.INTERACTIVE_CHART],
-        // category: t('Ranking'),
+        category: t('Correlation'),
         credits: ['https://echarts.apache.org'],
         description: t(
-          'Visualize a parallel set of metrics across multiple groups. Each group is visualized using its own line of points and each metric is represented as an edge in the chart.',
+          'Visualizes a metric across three dimensions of data in a single chart (X axis, Y axis, and bubble size). Bubbles from the same group can be showcased using bubble color.',
         ),
         name: t('Scatter Chart'),
         tags: [
