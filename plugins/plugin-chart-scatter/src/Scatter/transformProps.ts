@@ -56,6 +56,7 @@ export default function transformProps(
     legendOrientation,
     legendType,
     showLegend,
+    showLabels,
     x,
     y,
     size,
@@ -188,6 +189,12 @@ export default function transformProps(
       inRange: {
         symbolSize: [minBubbleSizeInt, maxBubbleSizeInt],
       },
+    },
+    label: {
+      show: showLabels,
+      formatter: '{a}',
+      minMargin: 10,
+      position: 'top',
     },
     tooltip: {
       trigger: 'item',
