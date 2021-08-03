@@ -23,13 +23,12 @@ import {
   getNumberFormatter,
 } from '@superset-ui/core';
 import { defaultGrid } from '@superset-ui/plugin-chart-echarts/lib/defaults';
-import {
-  getColtypesMapping,
-  getLegendProps,
-} from '@superset-ui/plugin-chart-echarts/lib/utils/series';
+import { getLegendProps } from '@superset-ui/plugin-chart-echarts/lib/utils/series';
 import { EChartsOption, LineSeriesOption, registerTransform, ScatterSeriesOption } from 'echarts';
 import { transform } from 'echarts-stat';
 import { DatasetOption, TopLevelFormatterParams } from 'echarts/types/dist/shared';
+import { DataRecordValue } from '@superset-ui/core/lib/query/types/QueryResponse';
+import { OptionDataValue, OptionSourceDataArrayRows } from 'echarts/types/src/util/types';
 import {
   DEFAULT_FORM_DATA,
   EchartsScatterChartProps,
@@ -37,14 +36,19 @@ import {
   ScatterChartTransformedProps,
 } from './types';
 import { DEFAULT_LEGEND_FORM_DATA } from '../types';
+import { buildScatterSeries } from './transforms';
 
 registerTransform(transform.regression);
+
+const X_DIMENSION = 0;
+const Y_DIMENSION = 1;
+const BUBBLE_SIZE_DIMENSION = 2;
+const NAME_DIMENSION = 3;
 
 export default function transformProps(
   chartProps: EchartsScatterChartProps,
 ): ScatterChartTransformedProps {
   const { formData, height, width, queriesData } = chartProps;
-  const coltypeMapping = getColtypesMapping(queriesData[0]);
 
   const {
     colorScheme,
@@ -57,7 +61,6 @@ export default function transformProps(
     size,
     maxBubbleSize,
     minBubbleSize,
-    metric = '',
     regression,
     showRegression,
     showRegressionLabel,
@@ -71,109 +74,94 @@ export default function transformProps(
     ...DEFAULT_FORM_DATA,
     ...formData,
   };
-  const metricsLabel = getMetricLabel(metric);
   const rawData = queriesData[0].data;
 
   const xField = getMetricLabel(x);
   const yField = getMetricLabel(y);
   const sizeField = getMetricLabel(size);
 
-  const maxSize = parseInt(maxBubbleSize, 10);
-  const minSize = parseInt(minBubbleSize, 10);
-  const minValue = rawData.reduce(
+  const maxBubbleSizeInt = parseInt(maxBubbleSize, 10);
+  const minBubbleSizeInt = parseInt(minBubbleSize, 10);
+  const minBubbleValue = rawData.reduce(
     (result, datum) => Math.min(result, datum[sizeField] as number),
     0,
   );
-  const maxValue = rawData.reduce(
+  const maxBubbleValue = rawData.reduce(
     (result, datum) => Math.max(result, datum[sizeField] as number),
     0,
   );
 
-  console.log('data', queriesData); // eslint-disable-line no-console
-  console.log('coltypeMapping', coltypeMapping); // eslint-disable-line no-console
-  console.log('groupby', groupby); // eslint-disable-line no-console
-  console.log('metricsLabel', metricsLabel); // eslint-disable-line no-console
-  console.log('formData', formData); // eslint-disable-line no-console
-  console.log('xField', xField); // eslint-disable-line no-console
-  console.log('yField', yField); // eslint-disable-line no-console
-  console.log('sizeField', sizeField); // eslint-disable-line no-console
-
   const colorFn = CategoricalColorNamespace.getScale(colorScheme as string);
 
-  function buildSeries(seriesName: string, datasetIndex: number): ScatterSeriesOption {
-    return {
-      name: seriesName,
-      type: 'scatter',
-      datasetIndex,
-      animation: false,
-      emphasis: showHighlighting
-        ? {
-            focus: 'series',
-          }
-        : undefined,
-      color: colorFn(seriesName),
-    };
-  }
-
-  const sourceDataSet: any[] = rawData.map((datum: DataRecord) => [
-    datum[xField],
-    datum[yField],
-    datum[sizeField],
-    ...groupby.map(group => datum[group]),
-  ]);
+  const sourceDataSet: OptionSourceDataArrayRows = rawData.map(
+    (datum: DataRecord) =>
+      [
+        datum[xField],
+        datum[yField],
+        datum[sizeField],
+        ...groupby.map(group => datum[group]),
+      ] as OptionDataValue[],
+  );
 
   const allGroups = rawData.map(datum => datum[groupby[0]] as string);
   const uniqueGroups = Array.from(new Set(allGroups).values());
 
-  const scatterTransforms: DatasetOption[] = [];
-  const scatterSeries: ScatterSeriesOption[] = [];
-  uniqueGroups.forEach((group, index) => {
-    const s = buildSeries(group, index + 1);
-    scatterSeries.push(s);
+  const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>
+    buildScatterSeries(group, index + 1, colorFn, showHighlighting),
+  );
 
-    const dataTransform: DatasetOption = {
-      transform: {
-        type: 'filter',
-        config: { dimension: 3, eq: group },
-      },
-    };
-    scatterTransforms.push(dataTransform);
-  });
-
-  const regressionSeries: LineSeriesOption = {
-    name: 'Regression',
-    type: 'line',
-    datasetIndex: scatterSeries.length + 1,
-    symbolSize: 0.1,
-    symbol: 'circle',
-    label: {
-      show: showRegressionLabel,
+  const scatterTransforms: DatasetOption[] = uniqueGroups.map(group => ({
+    transform: {
+      type: 'filter',
+      config: { dimension: NAME_DIMENSION, eq: group },
     },
-    labelLayout: { dx: -20 },
-    encode: { label: 2, tooltip: 1 },
-  };
+  }));
 
   const series: (ScatterSeriesOption | LineSeriesOption)[] = [...scatterSeries];
   if (showRegression) {
+    const regressionSeries: LineSeriesOption = {
+      name: 'Regression',
+      type: 'line',
+      datasetIndex: series.length + 1,
+      symbolSize: 0.1,
+      symbol: 'circle',
+      label: {
+        show: showRegressionLabel,
+      },
+      labelLayout: { dx: -20 },
+      encode: { label: 2, tooltip: 1 },
+    };
     series.push(regressionSeries);
   }
 
-  const regressionTransform = {
-    transform: {
-      type: 'ecStat:regression',
-      config: {
-        method: regression,
-      },
-    },
-  };
-
   const transforms: DatasetOption[] = [...scatterTransforms];
   if (showRegression) {
+    const regressionTransform = {
+      transform: {
+        type: 'ecStat:regression',
+        config: {
+          method: regression,
+        },
+      },
+    };
     transforms.push(regressionTransform);
   }
 
   const xAxisFormatter = getNumberFormatter(xAxisFormat);
   const yAxisFormatter = getNumberFormatter(yAxisFormat);
+
+  function tooltipFormatter(params: TopLevelFormatterParams) {
+    if (!Array.isArray(params)) {
+      const { value } = params;
+      const parsedValue = value as DataRecordValue[];
+      const seriesNames = parsedValue.slice(NAME_DIMENSION, parsedValue.length);
+      return `${seriesNames.join(' - ')}<br>
+                    ${xField}：${parsedValue[X_DIMENSION]}<br>
+                    ${yField}：${parsedValue[Y_DIMENSION]}<br>
+                    ${sizeField}：${parsedValue[BUBBLE_SIZE_DIMENSION]}<br>`;
+    }
+    throw new Error('cannot format tooltip');
+  }
 
   const echartOptions: EChartsOption = {
     grid: {
@@ -194,27 +182,17 @@ export default function transformProps(
     visualMap: {
       show: false,
       dimension: 2,
-      min: minValue,
-      max: maxValue,
+      min: minBubbleValue,
+      max: maxBubbleValue,
       seriesIndex: [0, 1],
       inRange: {
-        symbolSize: [minSize, maxSize],
+        symbolSize: [minBubbleSizeInt, maxBubbleSizeInt],
       },
     },
     tooltip: {
       trigger: 'item',
       showDelay: 0,
-      formatter: (params: TopLevelFormatterParams) => {
-        if (!Array.isArray(params)) {
-          const { value, name } = params;
-          const parsedValue = value as number[];
-          return `${name}<br>
-                    ${xField}：${parsedValue[1]}<br>
-                    ${yField}：${parsedValue[0]}<br>
-                    ${sizeField}：${parsedValue[2]}<br>`;
-        }
-        throw new Error('cannot format tooltip');
-      },
+      formatter: tooltipFormatter,
     },
     dataset: [
       {

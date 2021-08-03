@@ -17,16 +17,13 @@
  * under the License.
  */
 import React from 'react';
-import { FeatureFlag, isFeatureEnabled, t } from '@superset-ui/core';
+import { t } from '@superset-ui/core';
 import {
   ControlPanelConfig,
   formatSelectOptions,
   sharedControls,
 } from '@superset-ui/chart-controls';
-import { DEFAULT_FORM_DATA } from './types';
 import { highlightingSection, labelsSection, legendSection, regressionSection } from '../controls';
-
-const { emitFilter } = DEFAULT_FORM_DATA;
 
 const xAxisControls = [
   [<h1 className="section-header">{t('X Axis')}</h1>],
@@ -122,20 +119,6 @@ const config: ControlPanelConfig = {
       expanded: true,
       controlSetRows: [
         ['color_scheme'],
-        isFeatureEnabled(FeatureFlag.DASHBOARD_CROSS_FILTERS)
-          ? [
-              {
-                name: 'emit_filter',
-                config: {
-                  type: 'CheckboxControl',
-                  label: t('Enable emitting filters'),
-                  default: emitFilter,
-                  renderTrigger: true,
-                  description: t('Enable emmiting filters.'),
-                },
-              },
-            ]
-          : [],
         ...legendSection,
         ...xAxisControls,
         ...yAxisControls,

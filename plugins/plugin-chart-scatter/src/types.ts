@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { DataRecordValue, SetDataMaskHook } from '@superset-ui/core';
 import { EChartsOption } from 'echarts';
 
 export interface EchartsProps {
@@ -82,16 +81,4 @@ export enum LabelPositionEnum {
   InsideBottomLeft = 'insideBottomLeft',
   InsideTopRight = 'insideTopRight',
   InsideBottomRight = 'insideBottomRight',
-}
-
-export interface EChartTransformedProps<F> {
-  formData: F;
-  height: number;
-  width: number;
-  echartOptions: EChartsOption;
-  emitFilter: boolean;
-  setDataMask: SetDataMaskHook;
-  labelMap: Record<string, DataRecordValue[]>;
-  groupby: string[];
-  selectedValues: Record<number, string>;
 }

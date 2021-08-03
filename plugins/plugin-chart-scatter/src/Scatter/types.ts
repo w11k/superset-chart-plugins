@@ -29,9 +29,7 @@ export type EchartsScatterFormData = QueryFormData &
   EchartsLegendFormData & {
     colorScheme?: string;
     groupby: string[];
-    metrics: QueryFormMetric[];
     showLabels: boolean;
-    emitFilter: boolean;
     maxBubbleSize: string;
     minBubbleSize: string;
     x: QueryFormMetric;
@@ -66,7 +64,6 @@ export const DEFAULT_FORM_DATA: Partial<EchartsScatterFormData> = {
   showRegression: false,
   showRegressionLabel: false,
   regression: 'linear',
-  emitFilter: false,
 };
 
 export interface ScatterChartTransformedProps {
