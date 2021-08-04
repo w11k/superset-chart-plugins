@@ -108,7 +108,7 @@ export default function transformProps(
   const uniqueGroups = Array.from(new Set(allGroups).values());
 
   const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>
-    buildScatterSeries(group, index + 1, colorFn, showHighlighting),
+    buildScatterSeries(group, index + 1, colorFn, showHighlighting, showLabels),
   );
 
   const scatterTransforms: DatasetOption[] = uniqueGroups.map(group => ({
@@ -126,6 +126,7 @@ export default function transformProps(
       datasetIndex: series.length + 1,
       symbolSize: 0.1,
       symbol: 'circle',
+      smooth: true,
       label: {
         show: showRegressionLabel,
       },
@@ -189,12 +190,6 @@ export default function transformProps(
       inRange: {
         symbolSize: [minBubbleSizeInt, maxBubbleSizeInt],
       },
-    },
-    label: {
-      show: showLabels,
-      formatter: '{a}',
-      minMargin: 10,
-      position: 'top',
     },
     tooltip: {
       trigger: 'item',

@@ -21,6 +21,7 @@ import { t } from '@superset-ui/core';
 import {
   ControlPanelConfig,
   formatSelectOptions,
+  sections,
   sharedControls,
 } from '@superset-ui/chart-controls';
 import { highlightingSection, labelsSection, legendSection, regressionSection } from '../controls';
@@ -77,6 +78,7 @@ const yAxisControls = [
 
 const config: ControlPanelConfig = {
   controlPanelSections: [
+    sections.legacyRegularTime,
     {
       label: t('Query'),
       expanded: true,

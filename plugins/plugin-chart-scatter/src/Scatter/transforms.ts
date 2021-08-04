@@ -6,6 +6,7 @@ export function buildScatterSeries(
   datasetIndex: number,
   colorFn: CategoricalColorScale,
   showHighlighting: boolean,
+  showLabels: boolean,
 ): ScatterSeriesOption {
   return {
     name: seriesName,
@@ -18,5 +19,11 @@ export function buildScatterSeries(
         }
       : undefined,
     color: colorFn(seriesName),
+    label: {
+      show: showLabels,
+      formatter: '{a}',
+      minMargin: 10,
+      position: 'top',
+    },
   };
 }
