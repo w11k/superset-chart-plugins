@@ -36,7 +36,7 @@ import {
   ScatterChartTransformedProps,
 } from './types';
 import { DEFAULT_LEGEND_FORM_DATA } from '../types';
-import { buildScatterSeries } from './transforms';
+import { buildScatterSeries, scaleNumberToBubbleSize } from './transforms';
 
 registerTransform(transform.regression);
 
@@ -92,6 +92,17 @@ export default function transformProps(
     0,
   );
 
+  function symbolSizeFn(params: number[]) {
+    const size = params[BUBBLE_SIZE_DIMENSION];
+    return scaleNumberToBubbleSize(
+      size,
+      minBubbleValue,
+      maxBubbleValue,
+      minBubbleSizeInt,
+      maxBubbleSizeInt,
+    );
+  }
+
   const colorFn = CategoricalColorNamespace.getScale(colorScheme as string);
 
   const sourceDataSet: OptionSourceDataArrayRows = rawData.map(
@@ -108,7 +119,7 @@ export default function transformProps(
   const uniqueGroups = Array.from(new Set(allGroups).values());
 
   const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>
-    buildScatterSeries(group, index + 1, colorFn, showHighlighting, showLabels),
+    buildScatterSeries(group, index + 1, colorFn, showHighlighting, showLabels, symbolSizeFn),
   );
 
   const scatterTransforms: DatasetOption[] = uniqueGroups.map(group => ({
@@ -181,16 +192,6 @@ export default function transformProps(
       axisLabel: { formatter: yAxisFormatter },
     },
     series,
-    visualMap: {
-      show: false,
-      dimension: 2,
-      min: minBubbleValue,
-      max: maxBubbleValue,
-      seriesIndex: [0, 1],
-      inRange: {
-        symbolSize: [minBubbleSizeInt, maxBubbleSizeInt],
-      },
-    },
     tooltip: {
       trigger: 'item',
       showDelay: 0,
