@@ -66,6 +66,7 @@ export default function transformProps(
     regression,
     showRegression,
     showRegressionLabel,
+    regressionOrder,
     showHighlighting,
     xAxisTitle,
     xAxisFormat,
@@ -161,6 +162,7 @@ export default function transformProps(
         type: 'ecStat:regression',
         config: {
           method: regression,
+          order: parseInt(regressionOrder, 10),
         },
       },
     };

@@ -44,6 +44,7 @@ export type EchartsScatterFormData = QueryFormData &
     yAxisFormat: string;
     showRegression: boolean;
     showRegressionLabel: boolean;
+    regressionOrder: string;
     regression: 'linear' | 'exponential' | 'logarithmic' | 'polynomial';
 
     bubbleSize: string;

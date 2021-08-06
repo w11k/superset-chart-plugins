@@ -148,11 +148,27 @@ const regressionSelectControl = {
   },
 };
 
+const regressionPolyOrderControl = {
+  name: 'regressionOrder',
+  config: {
+    type: 'SelectControl',
+    freeForm: true,
+    label: 'Order',
+    choices: ['2', '3', '4', '5'],
+    default: '2',
+    renderTrigger: true,
+    description: t('Regression'),
+    visibility: ({ controls }: ControlPanelsContainerProps) =>
+      controls?.regression?.value === 'polynomial',
+  },
+};
+
 export const regressionSection = [
   [<h1 className="section-header">{t('Regression')}</h1>],
   [showRegressionControl],
   [showRegressionLabelControl],
   [regressionSelectControl],
+  [regressionPolyOrderControl],
 ];
 
 export const labelsSection = [
