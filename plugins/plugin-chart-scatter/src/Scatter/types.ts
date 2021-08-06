@@ -45,6 +45,9 @@ export type EchartsScatterFormData = QueryFormData &
     showRegression: boolean;
     showRegressionLabel: boolean;
     regression: 'linear' | 'exponential' | 'logarithmic' | 'polynomial';
+
+    bubbleSize: string;
+    useMetricForBubbleSize: boolean;
   };
 
 export interface EchartsScatterChartProps extends ChartProps {
@@ -64,6 +67,7 @@ export const DEFAULT_FORM_DATA: Partial<EchartsScatterFormData> = {
   showRegression: false,
   showRegressionLabel: false,
   regression: 'linear',
+  useMetricForBubbleSize: false,
 };
 
 export interface ScatterChartTransformedProps {

@@ -52,7 +52,7 @@ export default function transformProps(
 
   const {
     colorScheme,
-    groupby,
+    groupby: _groupby,
     legendOrientation,
     legendType,
     showLegend,
@@ -60,8 +60,9 @@ export default function transformProps(
     x,
     y,
     size,
-    maxBubbleSize,
-    minBubbleSize,
+    maxBubbleSize: _maxBubbleSize,
+    minBubbleSize: _minBubbleSize,
+    bubbleSize: _bubbleSize,
     regression,
     showRegression,
     showRegressionLabel,
@@ -70,6 +71,7 @@ export default function transformProps(
     xAxisFormat,
     yAxisTitle,
     yAxisFormat,
+    useMetricForBubbleSize,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
     ...DEFAULT_FORM_DATA,
@@ -81,8 +83,10 @@ export default function transformProps(
   const yField = getMetricLabel(y);
   const sizeField = getMetricLabel(size);
 
-  const maxBubbleSizeInt = parseInt(maxBubbleSize, 10);
-  const minBubbleSizeInt = parseInt(minBubbleSize, 10);
+  const groupby = _groupby.length === 0 ? ['All'] : _groupby;
+  const bubbleSize = parseInt(_bubbleSize, 10);
+  const maxBubbleSize = parseInt(_maxBubbleSize, 10);
+  const minBubbleSize = parseInt(_minBubbleSize, 10);
   const minBubbleValue = rawData.reduce(
     (result, datum) => Math.min(result, datum[sizeField] as number),
     0,
@@ -93,13 +97,16 @@ export default function transformProps(
   );
 
   function symbolSizeFn(params: number[]) {
+    if (!useMetricForBubbleSize) {
+      return bubbleSize;
+    }
     const size = params[BUBBLE_SIZE_DIMENSION];
     return scaleNumberToBubbleSize(
       size,
       minBubbleValue,
       maxBubbleValue,
-      minBubbleSizeInt,
-      maxBubbleSizeInt,
+      minBubbleSize,
+      maxBubbleSize,
     );
   }
 
@@ -110,8 +117,8 @@ export default function transformProps(
       [
         datum[xField],
         datum[yField],
-        datum[sizeField],
-        ...groupby.map(group => datum[group]),
+        datum[sizeField] ?? 1,
+        ...groupby.map(group => datum[group] ?? 'All'),
       ] as OptionDataValue[],
   );
 

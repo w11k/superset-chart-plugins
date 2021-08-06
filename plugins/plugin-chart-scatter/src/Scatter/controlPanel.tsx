@@ -20,11 +20,15 @@ import React from 'react';
 import { t } from '@superset-ui/core';
 import {
   ControlPanelConfig,
+  ControlPanelsContainerProps,
   formatSelectOptions,
   sections,
   sharedControls,
 } from '@superset-ui/chart-controls';
 import { highlightingSection, labelsSection, legendSection, regressionSection } from '../controls';
+import { DEFAULT_FORM_DATA } from './types';
+
+const { useMetricForBubbleSize } = DEFAULT_FORM_DATA;
 
 const xAxisControls = [
   [<h1 className="section-header">{t('X Axis')}</h1>],
@@ -76,6 +80,76 @@ const yAxisControls = [
   ],
 ];
 
+const bubbleSection = [
+  [<h1 className="section-header">{t('Bubble')}</h1>],
+  [
+    {
+      name: 'use_metric_for_bubble_size',
+      config: {
+        type: 'CheckboxControl',
+        label: t('Use Metric for Bubble Size'),
+        renderTrigger: true,
+        default: useMetricForBubbleSize,
+        description: t('Whether to choose a metric for Bubble Size'),
+      },
+    },
+  ],
+  [
+    {
+      name: `bubble_size`,
+      config: {
+        type: 'SelectControl',
+        freeForm: true,
+        label: t('Bubble Size'),
+        default: '5',
+        choices: formatSelectOptions(['1', '5', '10', '15', '25', '50', '75', '100']),
+        visibility: ({ controls }: ControlPanelsContainerProps) =>
+          !controls?.use_metric_for_bubble_size?.value,
+      },
+    },
+  ],
+  [
+    {
+      name: `size`,
+      config: {
+        ...sharedControls.size,
+        label: t('Bubble Size'),
+        validators: [],
+        visibility: ({ controls }: ControlPanelsContainerProps) =>
+          Boolean(controls?.use_metric_for_bubble_size?.value),
+      },
+    },
+  ],
+  [
+    {
+      name: 'min_bubble_size',
+      config: {
+        type: 'SelectControl',
+        freeForm: true,
+        label: t('Min Bubble Size'),
+        default: '5',
+        choices: formatSelectOptions(['1', '5', '10', '15', '25', '50', '75', '100']),
+        visibility: ({ controls }: ControlPanelsContainerProps) =>
+          Boolean(controls?.use_metric_for_bubble_size?.value),
+      },
+    },
+  ],
+  [
+    {
+      name: 'max_bubble_size',
+      config: {
+        type: 'SelectControl',
+        freeForm: true,
+        label: t('Max Bubble Size'),
+        default: '25',
+        choices: formatSelectOptions(['1', '5', '10', '15', '25', '50', '75', '100']),
+        visibility: ({ controls }: ControlPanelsContainerProps) =>
+          Boolean(controls?.use_metric_for_bubble_size?.value),
+      },
+    },
+  ],
+];
+
 const config: ControlPanelConfig = {
   controlPanelSections: [
     sections.legacyRegularTime,
@@ -87,32 +161,7 @@ const config: ControlPanelConfig = {
         ['y'],
         ['groupby'],
         ['adhoc_filters'],
-        [<h1 className="section-header">{t('Bubble')}</h1>],
-        ['size'],
-        [
-          {
-            name: 'min_bubble_size',
-            config: {
-              type: 'SelectControl',
-              freeForm: true,
-              label: t('Min Bubble Size'),
-              default: '5',
-              choices: formatSelectOptions(['5', '10', '15', '25', '50', '75', '100']),
-            },
-          },
-        ],
-        [
-          {
-            name: 'max_bubble_size',
-            config: {
-              type: 'SelectControl',
-              freeForm: true,
-              label: t('Max Bubble Size'),
-              default: '25',
-              choices: formatSelectOptions(['5', '10', '15', '25', '50', '75', '100']),
-            },
-          },
-        ],
+        ...bubbleSection,
         ...regressionSection,
       ],
     },
