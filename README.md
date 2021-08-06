@@ -25,6 +25,8 @@ version of superset
 
 This plugin is sponsored by [ZMG](https://www.zmg.de/)
 
+![ZMG Logo](.github/assets/zmg-logo.png)
+
 # Patron
 
 ### ❤️ [W11K - The Web Engineers](https://www.w11k.de/)
