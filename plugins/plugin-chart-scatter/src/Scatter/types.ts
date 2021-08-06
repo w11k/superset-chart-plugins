@@ -22,6 +22,7 @@ import {
   ChartProps,
   QueryFormData,
   QueryFormMetric,
+  QueryMode,
 } from '@superset-ui/core';
 import { DEFAULT_LEGEND_FORM_DATA, EchartsLegendFormData } from '../types';
 
@@ -33,8 +34,11 @@ export type EchartsScatterFormData = QueryFormData &
     maxBubbleSize: string;
     minBubbleSize: string;
     x: QueryFormMetric;
+    xRaw: QueryFormMetric;
     y: QueryFormMetric;
+    yRaw: QueryFormMetric;
     size: QueryFormMetric;
+    sizeRaw: QueryFormMetric;
     series: string;
 
     showHighlighting: boolean;
@@ -49,6 +53,7 @@ export type EchartsScatterFormData = QueryFormData &
 
     bubbleSize: string;
     useMetricForBubbleSize: boolean;
+    queryMode: QueryMode;
   };
 
 export interface EchartsScatterChartProps extends ChartProps {

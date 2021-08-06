@@ -21,10 +21,12 @@ import {
   DataRecord,
   getMetricLabel,
   getNumberFormatter,
+  QueryMode,
 } from '@superset-ui/core';
 import { defaultGrid } from '@superset-ui/plugin-chart-echarts/lib/defaults';
 import { getLegendProps } from '@superset-ui/plugin-chart-echarts/lib/utils/series';
 import { EChartsOption, LineSeriesOption, registerTransform, ScatterSeriesOption } from 'echarts';
+// @ts-ignore type information is missing. see: https://github.com/ecomfe/echarts-stat/issues/35
 import { transform } from 'echarts-stat';
 import { DatasetOption, TopLevelFormatterParams } from 'echarts/types/dist/shared';
 import { DataRecordValue } from '@superset-ui/core/lib/query/types/QueryResponse';
@@ -44,6 +46,8 @@ const X_DIMENSION = 0;
 const Y_DIMENSION = 1;
 const BUBBLE_SIZE_DIMENSION = 2;
 const NAME_DIMENSION = 3;
+const FALLBACK_SERIES_NAME = 'Data';
+const DEFAULT_BUBBLE_SIZE = null;
 
 export default function transformProps(
   chartProps: EchartsScatterChartProps,
@@ -58,8 +62,11 @@ export default function transformProps(
     showLegend,
     showLabels,
     x,
+    xRaw,
     y,
+    yRaw,
     size,
+    sizeRaw,
     maxBubbleSize: _maxBubbleSize,
     minBubbleSize: _minBubbleSize,
     bubbleSize: _bubbleSize,
@@ -73,18 +80,29 @@ export default function transformProps(
     yAxisTitle,
     yAxisFormat,
     useMetricForBubbleSize,
+    queryMode,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
     ...DEFAULT_FORM_DATA,
     ...formData,
   };
+
+  function getSeriesName(name?: DataRecordValue) {
+    if (typeof name === 'string') {
+      return name;
+    }
+    return FALLBACK_SERIES_NAME;
+  }
+
   const rawData = queriesData[0].data;
 
-  const xField = getMetricLabel(x);
-  const yField = getMetricLabel(y);
-  const sizeField = getMetricLabel(size);
+  const isAggMode = queryMode === QueryMode.aggregate;
 
-  const groupby = _groupby.length === 0 ? ['All'] : _groupby;
+  const xField = isAggMode ? getMetricLabel(x) : getMetricLabel(xRaw);
+  const yField = isAggMode ? getMetricLabel(y) : getMetricLabel(yRaw);
+  const sizeField = isAggMode ? getMetricLabel(size ?? '') : getMetricLabel(sizeRaw ?? '');
+
+  const groupby = _groupby && _groupby.length > 0 ? _groupby : [getSeriesName()];
   const bubbleSize = parseInt(_bubbleSize, 10);
   const maxBubbleSize = parseInt(_maxBubbleSize, 10);
   const minBubbleSize = parseInt(_minBubbleSize, 10);
@@ -118,12 +136,12 @@ export default function transformProps(
       [
         datum[xField],
         datum[yField],
-        datum[sizeField] ?? 1,
-        ...groupby.map(group => datum[group] ?? 'All'),
+        datum[sizeField] ?? DEFAULT_BUBBLE_SIZE,
+        ...groupby.map(group => getSeriesName(datum[group])),
       ] as OptionDataValue[],
   );
 
-  const allGroups = rawData.map(datum => datum[groupby[0]] as string);
+  const allGroups = rawData.map(datum => getSeriesName(datum[groupby[0]]));
   const uniqueGroups = Array.from(new Set(allGroups).values());
 
   const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>
@@ -180,7 +198,11 @@ export default function transformProps(
       return `${seriesNames.join(' - ')}<br>
                     ${xField}：${parsedValue[X_DIMENSION]}<br>
                     ${yField}：${parsedValue[Y_DIMENSION]}<br>
-                    ${sizeField}：${parsedValue[BUBBLE_SIZE_DIMENSION]}<br>`;
+                    ${
+                      useMetricForBubbleSize
+                        ? `${sizeField}：${parsedValue[BUBBLE_SIZE_DIMENSION]}<br>`
+                        : ''
+                    }`;
     }
     throw new Error('cannot format tooltip');
   }

@@ -17,18 +17,77 @@
  * under the License.
  */
 import React from 'react';
-import { t } from '@superset-ui/core';
+import { ensureIsArray, QueryFormColumn, QueryMode, t } from '@superset-ui/core';
 import {
+  ControlConfig,
   ControlPanelConfig,
   ControlPanelsContainerProps,
+  ControlPanelState,
+  ControlState,
+  ControlStateMapping,
   formatSelectOptions,
+  QueryModeLabel,
   sections,
   sharedControls,
 } from '@superset-ui/chart-controls';
 import { highlightingSection, labelsSection, legendSection, regressionSection } from '../controls';
 import { DEFAULT_FORM_DATA } from './types';
 
+export function getQueryMode(controls: ControlStateMapping): QueryMode {
+  const mode = controls?.query_mode?.value;
+  if (mode === QueryMode.aggregate || mode === QueryMode.raw) {
+    return mode as QueryMode;
+  }
+  const rawColumns = controls?.all_columns?.value as QueryFormColumn[] | undefined;
+  const hasRawColumns = rawColumns && rawColumns.length > 0;
+  return hasRawColumns ? QueryMode.raw : QueryMode.aggregate;
+}
+
 const { useMetricForBubbleSize } = DEFAULT_FORM_DATA;
+
+const requiredEntity = {
+  ...sharedControls.entity,
+  clearable: false,
+};
+const optionalEntity = {
+  ...sharedControls.entity,
+  clearable: true,
+  validators: [],
+};
+
+const queryMode: ControlConfig<'RadioButtonControl'> = {
+  type: 'RadioButtonControl',
+  label: t('Query mode'),
+  default: null,
+  options: [
+    [QueryMode.aggregate, QueryModeLabel[QueryMode.aggregate]],
+    [QueryMode.raw, QueryModeLabel[QueryMode.raw]],
+  ],
+  mapStateToProps: ({ controls }) => ({ value: getQueryMode(controls) }),
+  rerender: ['x', 'y', 'x_raw', 'y_raw', 'size', 'size_raw'],
+};
+
+function isQueryMode(mode: QueryMode) {
+  return ({ controls }: Pick<ControlPanelsContainerProps, 'controls'>) =>
+    getQueryMode(controls) === mode;
+}
+
+const isAggMode = isQueryMode(QueryMode.aggregate);
+const isRawMode = isQueryMode(QueryMode.raw);
+
+const validateAggControlValues = (controls: ControlStateMapping, values: any[]) => {
+  const areControlsEmpty = values.every(val => ensureIsArray(val).length === 0);
+  return areControlsEmpty && isAggMode({ controls })
+    ? [t('X and Y Metrics must have a value')]
+    : [];
+};
+
+const validateRawControlValues = (controls: ControlStateMapping, values: any[]) => {
+  const areControlsEmpty = values.every(val => ensureIsArray(val).length === 0);
+  return areControlsEmpty && isRawMode({ controls })
+    ? [t('X and Y Metrics must have a value')]
+    : [];
+};
 
 const xAxisControls = [
   [<h1 className="section-header">{t('X Axis')}</h1>],
@@ -89,6 +148,7 @@ const bubbleSection = [
         type: 'CheckboxControl',
         label: t('Use Metric for Bubble Size'),
         renderTrigger: true,
+        rerender: ['size', 'size_raw', 'min_bubble_size', 'max_bubble_size'],
         default: useMetricForBubbleSize,
         description: t('Whether to choose a metric for Bubble Size'),
       },
@@ -116,7 +176,17 @@ const bubbleSection = [
         label: t('Bubble Size'),
         validators: [],
         visibility: ({ controls }: ControlPanelsContainerProps) =>
-          Boolean(controls?.use_metric_for_bubble_size?.value),
+          Boolean(controls?.use_metric_for_bubble_size?.value) && isAggMode({ controls }),
+      },
+    },
+    {
+      name: 'size_raw',
+      config: {
+        ...optionalEntity,
+        label: t('Bubble Size'),
+        description: t('Size Column for the Bubble'),
+        visibility: ({ controls }: ControlPanelsContainerProps) =>
+          Boolean(controls?.use_metric_for_bubble_size?.value) && isRawMode({ controls }),
       },
     },
   ],
@@ -157,9 +227,105 @@ const config: ControlPanelConfig = {
       label: t('Query'),
       expanded: true,
       controlSetRows: [
-        ['x'],
-        ['y'],
-        ['groupby'],
+        [
+          {
+            name: 'query_mode',
+            config: queryMode,
+          },
+        ],
+        [
+          {
+            name: 'x_raw',
+            config: {
+              ...requiredEntity,
+              label: t('X Axis'),
+              description: t('X Axis Column'),
+              visibility: isRawMode,
+              validators: [],
+              mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
+                const { controls } = state;
+                const originalMapStateToProps = sharedControls?.entity?.mapStateToProps;
+                // @ts-ignore
+                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                newState.externalValidationErrors = validateRawControlValues(controls, [
+                  controls.x_raw.value,
+                ]);
+
+                return newState;
+              },
+            },
+          },
+          {
+            name: 'x',
+            config: {
+              ...sharedControls.x,
+              visibility: isAggMode,
+              validators: [],
+              mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
+                const { controls } = state;
+                const originalMapStateToProps = sharedControls?.x?.mapStateToProps;
+                // @ts-ignore
+                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                newState.externalValidationErrors = validateAggControlValues(controls, [
+                  controls.x.value,
+                ]);
+
+                return newState;
+              },
+            },
+          },
+        ],
+        [
+          {
+            name: 'y_raw',
+            config: {
+              ...requiredEntity,
+              label: t('Y Axis'),
+              description: t('Y Axis Column'),
+              visibility: isRawMode,
+              validators: [],
+              mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
+                const { controls } = state;
+                const originalMapStateToProps = sharedControls?.entity?.mapStateToProps;
+                // @ts-ignore
+                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                newState.externalValidationErrors = validateRawControlValues(controls, [
+                  controls.y_raw.value,
+                ]);
+
+                return newState;
+              },
+            },
+          },
+          {
+            name: 'y',
+            config: {
+              ...sharedControls.y,
+              visibility: isAggMode,
+              validators: [],
+              mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
+                const { controls } = state;
+                const originalMapStateToProps = sharedControls?.y?.mapStateToProps;
+                // @ts-ignore
+                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                newState.externalValidationErrors = validateAggControlValues(controls, [
+                  controls.y.value,
+                ]);
+
+                return newState;
+              },
+            },
+          },
+        ],
+        [
+          {
+            name: 'groupby',
+            config: {
+              ...sharedControls.groupby,
+              visibility: isAggMode,
+            },
+          },
+        ],
         ['adhoc_filters'],
         ...bubbleSection,
         ...regressionSection,

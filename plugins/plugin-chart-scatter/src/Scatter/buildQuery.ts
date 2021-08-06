@@ -16,12 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { buildQueryContext, QueryFormData } from '@superset-ui/core';
+import { buildQueryContext, QueryMode } from '@superset-ui/core';
+import { EchartsScatterFormData } from './types';
 
-export default function buildQuery(formData: QueryFormData) {
-  return buildQueryContext(formData, baseQueryObject => [
-    {
-      ...baseQueryObject,
+export default function buildQuery(formData: EchartsScatterFormData) {
+  const queryMode = formData.query_mode as QueryMode;
+  if (queryMode === QueryMode.aggregate) {
+    return buildQueryContext(formData, baseQueryObject => [
+      {
+        ...baseQueryObject,
+      },
+    ]);
+  }
+
+  return buildQueryContext(formData, {
+    queryFields: {
+      x_raw: 'columns',
+      y_raw: 'columns',
+      size_raw: 'columns',
     },
-  ]);
+  });
 }
