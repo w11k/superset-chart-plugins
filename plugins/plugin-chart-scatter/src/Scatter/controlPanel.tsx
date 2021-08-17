@@ -326,6 +326,7 @@ const config: ControlPanelConfig = {
             },
           },
         ],
+        ['row_limit'],
         ['adhoc_filters'],
         ...bubbleSection,
         ...regressionSection,
