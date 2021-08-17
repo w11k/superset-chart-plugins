@@ -38,7 +38,13 @@ import {
   ScatterChartTransformedProps,
 } from './types';
 import { DEFAULT_LEGEND_FORM_DATA } from '../types';
-import { buildScatterSeries, scaleNumberToBubbleSize } from './transforms';
+import {
+  buildScatterSeries,
+  buildScatterTransforms,
+  getRegressionSeries,
+  getRegressionTransform,
+  scaleNumberToBubbleSize,
+} from './transforms';
 
 registerTransform(transform.regression);
 
@@ -88,6 +94,9 @@ export default function transformProps(
   };
 
   function getSeriesName(name?: DataRecordValue) {
+    if (typeof name === 'number') {
+      return `${name}`;
+    }
     if (typeof name === 'string') {
       return name;
     }
@@ -102,7 +111,7 @@ export default function transformProps(
   const yField = isAggMode ? getMetricLabel(y) : getMetricLabel(yRaw);
   const sizeField = isAggMode ? getMetricLabel(size ?? '') : getMetricLabel(sizeRaw ?? '');
 
-  const groupby = _groupby && _groupby.length > 0 ? _groupby : [getSeriesName()];
+  const groupby = isAggMode && _groupby && _groupby.length > 0 ? _groupby : [getSeriesName()];
   const bubbleSize = parseInt(_bubbleSize, 10);
   const maxBubbleSize = parseInt(_maxBubbleSize, 10);
   const minBubbleSize = parseInt(_minBubbleSize, 10);
@@ -148,44 +157,17 @@ export default function transformProps(
     buildScatterSeries(group, index + 1, colorFn, showHighlighting, showLabels, symbolSizeFn),
   );
 
-  const scatterTransforms: DatasetOption[] = uniqueGroups.map(group => ({
-    transform: {
-      type: 'filter',
-      config: { dimension: NAME_DIMENSION, eq: group },
-    },
-  }));
+  const scatterTransforms: DatasetOption[] = buildScatterTransforms(uniqueGroups, NAME_DIMENSION);
 
-  const series: (ScatterSeriesOption | LineSeriesOption)[] = [...scatterSeries];
-  if (showRegression) {
-    const regressionSeries: LineSeriesOption = {
-      name: 'Regression',
-      type: 'line',
-      datasetIndex: series.length + 1,
-      symbolSize: 0.1,
-      symbol: 'circle',
-      smooth: true,
-      label: {
-        show: showRegressionLabel,
-      },
-      labelLayout: { dx: -20 },
-      encode: { label: 2, tooltip: 1 },
-    };
-    series.push(regressionSeries);
-  }
+  const series = [
+    ...scatterSeries,
+    showRegression ? getRegressionSeries(scatterSeries.length + 1, showRegressionLabel) : null,
+  ].filter(option => option != null) as (ScatterSeriesOption | LineSeriesOption)[];
 
-  const transforms: DatasetOption[] = [...scatterTransforms];
-  if (showRegression) {
-    const regressionTransform = {
-      transform: {
-        type: 'ecStat:regression',
-        config: {
-          method: regression,
-          order: parseInt(regressionOrder, 10),
-        },
-      },
-    };
-    transforms.push(regressionTransform);
-  }
+  const transforms = [
+    ...scatterTransforms,
+    showRegression ? getRegressionTransform(regression, parseInt(regressionOrder, 10)) : null,
+  ].filter(option => option != null) as DatasetOption[];
 
   const xAxisFormatter = getNumberFormatter(xAxisFormat);
   const yAxisFormatter = getNumberFormatter(yAxisFormat);
@@ -236,7 +218,7 @@ export default function transformProps(
     ],
   };
 
-  console.log('echartOptions', echartOptions); // eslint-disable-line no-console
+  // console.log('echartOptions', echartOptions); // eslint-disable-line no-console
 
   return {
     formData,

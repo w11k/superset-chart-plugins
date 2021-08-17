@@ -52,14 +52,12 @@ export enum LegendType {
 }
 
 export type EchartsLegendFormData = {
-  legendMargin: number | null | string;
   legendOrientation: LegendOrientation;
   legendType: LegendType;
   showLegend: boolean;
 };
 
 export const DEFAULT_LEGEND_FORM_DATA: EchartsLegendFormData = {
-  legendMargin: null,
   legendOrientation: LegendOrientation.Top,
   legendType: LegendType.Scroll,
   showLegend: false,

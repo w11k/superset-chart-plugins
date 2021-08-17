@@ -1,5 +1,7 @@
-import { ScatterSeriesOption } from 'echarts';
+import { LineSeriesOption, ScatterSeriesOption } from 'echarts';
 import { CategoricalColorScale } from '@superset-ui/core';
+import { DatasetOption } from 'echarts/types/dist/shared';
+import { EchartsScatterFormData } from './types';
 
 export function buildScatterSeries(
   seriesName: string,
@@ -27,6 +29,49 @@ export function buildScatterSeries(
       position: 'top',
     },
     symbolSize: symbolSizeFn,
+  };
+}
+
+export function buildScatterTransforms(uniqueGroups: string[], dimension: number) {
+  return uniqueGroups.map(group => ({
+    transform: {
+      type: 'filter',
+      config: { dimension, eq: group },
+    },
+  }));
+}
+
+export function getRegressionSeries(
+  datasetIndex: number,
+  showRegressionLabel: boolean,
+): LineSeriesOption {
+  return {
+    name: 'Regression',
+    type: 'line',
+    datasetIndex,
+    symbolSize: 0.1,
+    symbol: 'circle',
+    smooth: true,
+    label: {
+      show: showRegressionLabel,
+    },
+    labelLayout: { dx: -20 },
+    encode: { label: 2, tooltip: 1 },
+  };
+}
+
+export function getRegressionTransform(
+  regression: EchartsScatterFormData['regression'],
+  regressionOrder: number,
+): DatasetOption {
+  return {
+    transform: {
+      type: 'ecStat:regression',
+      config: {
+        method: regression,
+        order: regressionOrder,
+      },
+    },
   };
 }
 

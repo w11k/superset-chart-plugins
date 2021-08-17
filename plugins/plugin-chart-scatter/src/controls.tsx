@@ -22,7 +22,6 @@ import { DEFAULT_FORM_DATA } from './Scatter/types';
  * under the License.
  */
 const {
-  legendMargin,
   legendOrientation,
   legendType,
   showLabels,
@@ -41,20 +40,6 @@ const showLegendControl = {
     renderTrigger: true,
     default: showLegend,
     description: t('Whether to display a legend for the chart'),
-  },
-};
-
-const legendMarginControl = {
-  name: 'legendMargin',
-  config: {
-    type: 'TextControl',
-    label: t('Margin'),
-    renderTrigger: true,
-    isInt: true,
-    default: legendMargin,
-    description: t('Additional padding for legend.'),
-    visibility: ({ controls }: ControlPanelsContainerProps) =>
-      Boolean(controls?.show_legend?.value),
   },
 };
 
@@ -101,7 +86,6 @@ export const legendSection = [
   [showLegendControl],
   [legendTypeControl],
   [legendOrientationControl],
-  [legendMarginControl],
 ];
 
 const showRegressionControl = {

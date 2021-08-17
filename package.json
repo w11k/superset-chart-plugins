@@ -18,6 +18,7 @@
     "test": "yarn jest",
     "test:watch": "yarn lint:fix && yarn jest --watch",
     "type": "yarn build --no-babel",
+    "release": "yarn build && lerna publish",
     "list-changed-packages": "lerna changed",
     "manual-release": "lerna publish --force-publish && yarn postrelease",
     "clean-npm-lock": "rm -rf package-lock.json ./{packages,plugins}/*/package-lock.json"

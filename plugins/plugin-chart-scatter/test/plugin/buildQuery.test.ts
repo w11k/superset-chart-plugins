@@ -1,16 +1,21 @@
 import buildQuery from '../../src/Scatter/buildQuery';
+import {
+  aggregatedformData,
+  expectedAggregatedQuery,
+  expectedRawQuery,
+  rawFormData,
+} from './testdata';
 
 describe('Scatter buildQuery', () => {
-  const formData = {
-    datasource: '5__table',
-    granularity_sqla: 'ds',
-    series: 'foo',
-    viz_type: 'my_chart',
-  };
-
-  it('should build groupby with series in form data', () => {
-    const queryContext = buildQuery(formData);
+  it('should build query in aggregate data mode', () => {
+    const queryContext = buildQuery(aggregatedformData);
     const [query] = queryContext.queries;
-    expect(query).toBeDefined();
+    expect(query).toEqual(expectedAggregatedQuery);
+  });
+
+  it('should build query in raw data mode', () => {
+    const queryContext = buildQuery(rawFormData);
+    const [query] = queryContext.queries;
+    expect(query).toEqual(expectedRawQuery);
   });
 });
