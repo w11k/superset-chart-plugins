@@ -1,6 +1,6 @@
 {
   "name": "@w11k/plugin-chart-scatter",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Superset Chart - Scatter",
   "sideEffects": false,
   "main": "lib/index.js",
@@ -28,13 +28,13 @@
   "dependencies": {
     "@superset-ui/chart-controls": "^0.17.41",
     "@superset-ui/core": "^0.17.40",
+    "@superset-ui/plugin-chart-echarts": "^0.17.65",
     "@types/mathjs": "^6.0.7",
     "d3-array": "^1.2.0",
     "echarts": "^5.1.2",
     "echarts-stat": "^1.2.0",
     "lodash": "^4.17.15",
-    "mathjs": "^8.0.1",
-    "@superset-ui/plugin-chart-echarts": "^0.17.65"
+    "mathjs": "^8.0.1"
   },
   "peerDependencies": {
     "react": "^16.13.1"
