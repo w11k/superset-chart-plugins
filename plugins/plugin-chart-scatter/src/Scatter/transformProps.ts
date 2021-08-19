@@ -186,7 +186,7 @@ export default function transformProps(
                         : ''
                     }`;
     }
-    throw new Error('cannot format tooltip');
+    return '';
   }
 
   const echartOptions: EChartsOption = {
@@ -217,8 +217,6 @@ export default function transformProps(
       ...transforms,
     ],
   };
-
-  // console.log('echartOptions', echartOptions); // eslint-disable-line no-console
 
   return {
     formData,
