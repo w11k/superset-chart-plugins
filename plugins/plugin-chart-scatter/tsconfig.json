@@ -2,8 +2,7 @@
   "compilerOptions": {
     "declarationDir": "lib",
     "outDir": "lib",
-    "rootDir": "src",
-    "jsx": "react"
+    "rootDir": "src"
   },
   "exclude": [
     "lib",

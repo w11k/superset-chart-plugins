@@ -246,7 +246,7 @@ const config: ControlPanelConfig = {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.entity?.mapStateToProps;
                 // @ts-ignore
-                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateRawControlValues(controls, [
                   controls.x_raw.value,
                 ]);
@@ -265,7 +265,7 @@ const config: ControlPanelConfig = {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.x?.mapStateToProps;
                 // @ts-ignore
-                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateAggControlValues(controls, [
                   controls.x.value,
                 ]);
@@ -288,7 +288,7 @@ const config: ControlPanelConfig = {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.entity?.mapStateToProps;
                 // @ts-ignore
-                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateRawControlValues(controls, [
                   controls.y_raw.value,
                 ]);
@@ -307,7 +307,7 @@ const config: ControlPanelConfig = {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.y?.mapStateToProps;
                 // @ts-ignore
-                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateAggControlValues(controls, [
                   controls.y.value,
                 ]);

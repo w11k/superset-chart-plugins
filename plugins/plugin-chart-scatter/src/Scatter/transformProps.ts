@@ -109,7 +109,7 @@ export default function transformProps(
 
   const xField = isAggMode ? getMetricLabel(x) : getMetricLabel(xRaw);
   const yField = isAggMode ? getMetricLabel(y) : getMetricLabel(yRaw);
-  const sizeField = isAggMode ? getMetricLabel(size ?? '') : getMetricLabel(sizeRaw ?? '');
+  const sizeField = isAggMode ? getMetricLabel(size || '') : getMetricLabel(sizeRaw || '');
 
   const groupby = isAggMode && _groupby && _groupby.length > 0 ? _groupby : [getSeriesName()];
   const bubbleSize = parseInt(_bubbleSize, 10);
@@ -145,7 +145,7 @@ export default function transformProps(
       [
         datum[xField],
         datum[yField],
-        datum[sizeField] ?? DEFAULT_BUBBLE_SIZE,
+        datum[sizeField] || DEFAULT_BUBBLE_SIZE,
         ...groupby.map(group => getSeriesName(datum[group])),
       ] as OptionDataValue[],
   );
