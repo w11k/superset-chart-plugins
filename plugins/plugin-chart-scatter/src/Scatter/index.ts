@@ -48,7 +48,7 @@ export default class EchartsScatterChartPlugin extends ChartPlugin<
         category: t('Correlation'),
         credits: ['https://echarts.apache.org'],
         description: t(
-          'Visualizes a metric across three dimensions of data in a single chart (X axis, Y axis, and bubble size). Bubbles from the same group can be showcased using bubble color.',
+          'Visualizes a metric across three dimensions of data in a single chart (X axis, Y axis, and bubble size). Data can be aggregated and grouped with the same color or the bubbles can be plotted as raw data',
         ),
         name: t('Scatter Chart'),
         tags: [
