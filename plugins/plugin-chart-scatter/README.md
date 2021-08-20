@@ -58,3 +58,19 @@ Then use it via `SuperChart`
 └── types
     └── external.d.ts
 ```
+
+# Sponsor
+
+This plugin is sponsored by [ZMG](https://www.zmg.de/)
+
+![ZMG Logo](https://raw.githubusercontent.com/w11k/superset-chart-plugins/master/.github/assets/zmg-logo.png)
+
+# Patron
+
+### ❤️ [W11K - The Web Engineers](https://www.w11k.de/)
+
+### ❤️ [theCodeCampus - Trainings for Angular and TypeScript](https://www.thecodecampus.de/)
+
+# License
+
+Apache-2.0
