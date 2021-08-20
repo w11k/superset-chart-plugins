@@ -1,6 +1,6 @@
 {
   "name": "@w11k/plugin-chart-scatter",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Superset Chart - Scatter",
   "sideEffects": false,
   "main": "lib/index.js",
