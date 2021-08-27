@@ -248,7 +248,7 @@ const config: ControlPanelConfig = {
                 // @ts-ignore
                 const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateRawControlValues(controls, [
-                  controls.x_raw.value,
+                  controls.x_raw?.value,
                 ]);
 
                 return newState;
@@ -267,7 +267,7 @@ const config: ControlPanelConfig = {
                 // @ts-ignore
                 const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateAggControlValues(controls, [
-                  controls.x.value,
+                  controls.x?.value,
                 ]);
 
                 return newState;
@@ -290,7 +290,7 @@ const config: ControlPanelConfig = {
                 // @ts-ignore
                 const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateRawControlValues(controls, [
-                  controls.y_raw.value,
+                  controls.y_raw?.value,
                 ]);
 
                 return newState;
@@ -309,7 +309,7 @@ const config: ControlPanelConfig = {
                 // @ts-ignore
                 const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateAggControlValues(controls, [
-                  controls.y.value,
+                  controls.y?.value,
                 ]);
 
                 return newState;
