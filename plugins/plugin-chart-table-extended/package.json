@@ -1,0 +1,47 @@
+{
+  "name": "@w11k/plugin-chart-table-extended",
+  "version": "0.0.1",
+  "description": "Superset Chart - Table",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "sideEffects": false,
+  "files": [
+    "esm",
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/w11k/superset-chart-plugins.git"
+  },
+  "keywords": [
+    "superset"
+  ],
+  "author": "Kai Henzler",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/w11k/superset-chart-plugins/issues"
+  },
+  "homepage": "https://github.com/w11k/superset-chart-plugins#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
+    "@superset-ui/chart-controls": "0.18.13",
+    "@superset-ui/core": "0.18.13",
+    "@types/d3-array": "^2.9.0",
+    "@types/react-table": "^7.0.29",
+    "d3-array": "^2.4.0",
+    "match-sorter": "^6.3.0",
+    "memoize-one": "^5.1.1",
+    "react-modal-image": "^2.5.0",
+    "react-table": "^7.6.3",
+    "regenerator-runtime": "^0.13.7",
+    "xss": "^1.0.8"
+  },
+  "peerDependencies": {
+    "@types/react": "*",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}

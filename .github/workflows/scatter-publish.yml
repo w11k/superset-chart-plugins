@@ -1,4 +1,4 @@
-name: publish npm package
+name: publish Scatter
 
 on:
   workflow_dispatch:

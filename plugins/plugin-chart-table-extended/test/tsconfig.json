@@ -11,5 +11,12 @@
     "../types/**/*",
     "../../../types/**/*"
   ],
-  "references": []
+  "references": [
+    {
+      "path": "../../../packages/superset-ui-chart-controls"
+    },
+    {
+      "path": "../../../packages/superset-ui-core"
+    }
+  ]
 }

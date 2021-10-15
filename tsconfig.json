@@ -3,6 +3,9 @@
   "references": [
     {
       "path": "plugin-chart-scatter"
+    },
+    {
+      "path": "plugin-chart-table-extended"
     }
   ],
   "extends": "./tsconfig.options.json"

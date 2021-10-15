@@ -16,6 +16,7 @@
     "format": "yarn prettier",
     "prettier": "prettier --write .",
     "test": "yarn jest",
+    "test:ci": "yarn jest --coverage",
     "test:watch": "yarn lint:fix && yarn jest --watch",
     "type": "yarn build --no-babel",
     "release": "yarn build && lerna publish",
