@@ -5,7 +5,13 @@
       "path": "plugin-chart-scatter"
     },
     {
+      "path": "plugin-chart-scatter/test"
+    },
+    {
       "path": "plugin-chart-table-extended"
+    },
+    {
+      "path": "plugin-chart-table-extended/test"
     }
   ],
   "extends": "./tsconfig.options.json"

@@ -81,8 +81,8 @@ const processColumns = memoizeOne(function processColumns(props: TableChartProps
   const granularity = extractTimegrain(props.rawFormData);
   const { data: records, colnames, coltypes } = queriesData[0] || {};
   // convert `metrics` and `percentMetrics` to the key names in `data.records`
-  const metrics = (metrics_ ?? []).map(getMetricLabel);
-  const rawPercentMetrics = (percentMetrics_ ?? []).map(getMetricLabel);
+  const metrics = (metrics_ || []).map(getMetricLabel);
+  const rawPercentMetrics = (percentMetrics_ || []).map(getMetricLabel);
   // column names for percent metrics always starts with a '%' sign.
   const percentMetrics = rawPercentMetrics.map((x: string) => `%${x}`);
   const metricsSet = new Set(metrics);
@@ -212,14 +212,14 @@ const transformProps = (chartProps: TableChartProps): TableChartTransformedProps
   let rowCount;
   if (serverPagination) {
     [baseQuery, countQuery, totalQuery] = queriesData;
-    rowCount = (countQuery?.data?.[0]?.rowcount as number) ?? 0;
+    rowCount = (countQuery?.data?.[0]?.rowcount as number) || 0;
   } else {
     [baseQuery, totalQuery] = queriesData;
-    rowCount = baseQuery?.rowcount ?? 0;
+    rowCount = baseQuery?.rowcount || 0;
   }
   const data = processDataRecords(baseQuery?.data, columns);
   const totals = showTotals && queryMode === QueryMode.aggregate ? totalQuery?.data[0] : undefined;
-  const columnColorFormatters = getColorFormatters(conditionalFormatting, data) ?? [];
+  const columnColorFormatters = getColorFormatters(conditionalFormatting, data) || [];
 
   return {
     height,

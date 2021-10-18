@@ -286,7 +286,7 @@ export default function DataTable<D extends object>({
   let resultCurrentPage = pageIndex;
   let resultOnPageChange: (page: number) => void = gotoPage;
   if (serverPagination) {
-    const serverPageSize = serverPaginationData.pageSize ?? initialPageSize;
+    const serverPageSize = serverPaginationData.pageSize || initialPageSize;
     resultPageCount = Math.ceil(rowCount / serverPageSize);
     if (!Number.isFinite(resultPageCount)) {
       resultPageCount = 0;
@@ -298,7 +298,7 @@ export default function DataTable<D extends object>({
     if (foundPageSizeIndex === -1) {
       resultCurrentPageSize = 0;
     }
-    resultCurrentPage = serverPaginationData.currentPage ?? 0;
+    resultCurrentPage = serverPaginationData.currentPage || 0;
     resultOnPageChange = (pageNumber: number) =>
       onServerPaginationChange(pageNumber, serverPageSize);
   }

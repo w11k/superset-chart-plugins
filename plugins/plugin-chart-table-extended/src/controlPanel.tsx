@@ -185,7 +185,7 @@ const config: ControlPanelConfig = {
               mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.groupby?.mapStateToProps;
-                const newState = originalMapStateToProps?.(state, controlState) ?? {};
+                const newState = originalMapStateToProps?.(state, controlState) || {};
                 newState.externalValidationErrors = validateAggControlValues(controls, [
                   controls.metrics?.value,
                   controls.percent_metrics?.value,
@@ -461,8 +461,8 @@ const config: ControlPanelConfig = {
               label: t('Conditional formatting'),
               description: t('Apply conditional color formatting to numeric columns'),
               mapStateToProps(explore, control, chart) {
-                const verboseMap = explore?.datasource?.verbose_map ?? {};
-                const { colnames, coltypes } = chart?.queriesResponse?.[0] ?? {};
+                const verboseMap = explore?.datasource?.verbose_map || {};
+                const { colnames, coltypes } = chart?.queriesResponse?.[0] || {};
                 const numericColumns =
                   Array.isArray(colnames) && Array.isArray(coltypes)
                     ? colnames
@@ -470,7 +470,7 @@ const config: ControlPanelConfig = {
                           (colname: string, index: number) =>
                             coltypes[index] === GenericDataType.NUMERIC,
                         )
-                        .map(colname => ({ value: colname, label: verboseMap[colname] ?? colname }))
+                        .map(colname => ({ value: colname, label: verboseMap[colname] || colname }))
                     : [];
                 return {
                   columnOptions: numericColumns,
