@@ -15,7 +15,6 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: yarn
-      - run: cd plugins/plugin-chart-table-extended && npm install
       - run: npm run build
       - run: npm run test
       - run: cd plugins/plugin-chart-table-extended && npm publish
