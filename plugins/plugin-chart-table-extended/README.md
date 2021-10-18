@@ -14,16 +14,16 @@ Configure `key`, which can be any `string`, and register the plugin. This `key` 
 lookup this chart throughout the app.
 
 ```js
-import { EchartsScatterChartPlugin } from '@w11k/plugin-chart-table-extended/src';
+import TableChartExtendedPlugin from '@w11k/plugin-chart-table-extended/src';
 
-new EchartsScatterChartPlugin().configure({ key: 'chart-table-extended' }).register();
+new TableChartExtendedPlugin().configure({ key: 'table_extended' }).register();
 ```
 
 Then use it via `SuperChart`
 
 ```js
 <SuperChart
-  chartType="chart-table-extended"
+  chartType="table_extended"
   width={600}
   height={600}
   formData={...}
