@@ -14,7 +14,7 @@ Configure `key`, which can be any `string`, and register the plugin. This `key` 
 lookup this chart throughout the app.
 
 ```js
-import { EchartsScatterChartPlugin } from '@w11k/plugin-chart-scatter/src';
+import { EchartsScatterChartPlugin } from '@w11k/plugin-chart-scatter';
 
 new EchartsScatterChartPlugin().configure({ key: 'scatter' }).register();
 ```

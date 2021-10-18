@@ -5,6 +5,7 @@ Monorepo for apache superset chart plugins
 # Plugins
 
 - [Scatter Chart](./plugins/plugin-chart-scatter/README.md)
+- [Table Chart](./plugins/plugin-chart-table-extended/README.md)
 
 # Release a new version
 

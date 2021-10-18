@@ -35,7 +35,7 @@ const metadata = new ChartMetadata({
   category: t('Table'),
   canBeAnnotationTypes: ['EVENT', 'INTERVAL'],
   description: t(
-    'Classic row-by-column spreadsheet like view of a dataset. Use tables to showcase a view into the underlying data or to show aggregated metrics.',
+    'Classic row-by-column spreadsheet like view of a dataset. Use tables to showcase a view into the underlying data or to show aggregated metrics. Displays a thumbnail if the column content is an image',
   ),
   exampleGallery: [{ url: example1 }, { url: example2 }, { url: example3 }],
   name: t('Table Extended'),

@@ -14,7 +14,7 @@ Configure `key`, which can be any `string`, and register the plugin. This `key` 
 lookup this chart throughout the app.
 
 ```js
-import TableChartExtendedPlugin from '@w11k/plugin-chart-table-extended/src';
+import TableChartExtendedPlugin from '@w11k/plugin-chart-table-extended';
 
 new TableChartExtendedPlugin().configure({ key: 'table_extended' }).register();
 ```
