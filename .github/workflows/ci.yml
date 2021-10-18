@@ -16,13 +16,9 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - name: Install dependencies
       - run: yarn install
       - run: cd plugins/plugin-chart-scatter && npm install
       - run: cd plugins/plugin-chart-table-extended && npm install
-      - name: Build packages
-        run: yarn build
-      - name: Run ESLint
-        run: yarn lint --quiet
-      - name: Run unit tests
-        run: yarn test
+      - run: yarn build
+      - run: yarn lint --quiet
+      - run: yarn test
