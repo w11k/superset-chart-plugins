@@ -37,7 +37,8 @@
     "react-modal-image": "^2.5.0",
     "react-table": "^7.6.3",
     "regenerator-runtime": "^0.13.7",
-    "xss": "^1.0.8"
+    "xss": "^1.0.8",
+    "antd": "^4.9.4"
   },
   "peerDependencies": {
     "@types/react": "*",
