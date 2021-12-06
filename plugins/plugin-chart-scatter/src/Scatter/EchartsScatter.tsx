@@ -17,7 +17,7 @@
  * under the License.
  */
 import React from 'react';
-import Echart from '@superset-ui/plugin-chart-echarts/lib/components/Echart';
+import Echart from '../components/Echart';
 import { ScatterChartTransformedProps } from './types';
 
 export default function EchartsScatter({

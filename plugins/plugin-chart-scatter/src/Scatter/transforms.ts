@@ -1,7 +1,9 @@
-import { LineSeriesOption, ScatterSeriesOption } from 'echarts';
+import { LegendComponentOption, LineSeriesOption, ScatterSeriesOption } from 'echarts';
 import { CategoricalColorScale } from '@superset-ui/core';
 import { DatasetOption } from 'echarts/types/dist/shared';
+import { TIMESERIES_CONSTANTS } from '../../node_modules/@superset-ui/plugin-chart-echarts/lib/constants';
 import { EchartsScatterFormData } from './types';
+import { LegendOrientation, LegendType } from '../types';
 
 export function buildScatterSeries(
   seriesName: string,
@@ -83,4 +85,37 @@ export function scaleNumberToBubbleSize(
   out_max: number,
 ) {
   return ((value - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+}
+
+export function getLegendProps(
+  type: LegendType,
+  orientation: LegendOrientation,
+  show: boolean,
+  zoomable = false,
+): LegendComponentOption | LegendComponentOption[] {
+  const legend: LegendComponentOption | LegendComponentOption[] = {
+    orient: [LegendOrientation.Top, LegendOrientation.Bottom].includes(orientation)
+      ? 'horizontal'
+      : 'vertical',
+    show,
+    type,
+  };
+  switch (orientation) {
+    case LegendOrientation.Left:
+      legend.left = 0;
+      break;
+    case LegendOrientation.Right:
+      legend.right = 0;
+      legend.top = zoomable ? TIMESERIES_CONSTANTS.legendRightTopOffset : 0;
+      break;
+    case LegendOrientation.Bottom:
+      legend.bottom = 0;
+      break;
+    case LegendOrientation.Top:
+    default:
+      legend.top = 0;
+      legend.right = zoomable ? TIMESERIES_CONSTANTS.legendTopRightOffset : 0;
+      break;
+  }
+  return legend;
 }

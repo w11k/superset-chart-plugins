@@ -23,8 +23,6 @@ import {
   getNumberFormatter,
   QueryMode,
 } from '@superset-ui/core';
-import { defaultGrid } from '@superset-ui/plugin-chart-echarts/lib/defaults';
-import { getLegendProps } from '@superset-ui/plugin-chart-echarts/lib/utils/series';
 import { EChartsOption, LineSeriesOption, registerTransform, ScatterSeriesOption } from 'echarts';
 // @ts-ignore type information is missing. see: https://github.com/ecomfe/echarts-stat/issues/35
 import { transform } from 'echarts-stat';
@@ -32,19 +30,21 @@ import { DatasetOption, TopLevelFormatterParams } from 'echarts/types/dist/share
 import { DataRecordValue } from '@superset-ui/core/lib/query/types/QueryResponse';
 import { OptionDataValue, OptionSourceDataArrayRows } from 'echarts/types/src/util/types';
 import {
+  buildScatterSeries,
+  buildScatterTransforms,
+  getLegendProps,
+  getRegressionSeries,
+  getRegressionTransform,
+  scaleNumberToBubbleSize,
+} from './transforms';
+import { defaultGrid } from '../../node_modules/@superset-ui/plugin-chart-echarts/lib/defaults';
+import {
   DEFAULT_FORM_DATA,
   EchartsScatterChartProps,
   EchartsScatterFormData,
   ScatterChartTransformedProps,
 } from './types';
 import { DEFAULT_LEGEND_FORM_DATA } from '../types';
-import {
-  buildScatterSeries,
-  buildScatterTransforms,
-  getRegressionSeries,
-  getRegressionTransform,
-  scaleNumberToBubbleSize,
-} from './transforms';
 
 registerTransform(transform.regression);
 
@@ -146,7 +146,7 @@ export default function transformProps(
         datum[xField],
         datum[yField],
         datum[sizeField] || DEFAULT_BUBBLE_SIZE,
-        ...groupby.map(group => getSeriesName(datum[group])),
+        ...groupby.map(group => getSeriesName(datum[group as string])),
       ] as OptionDataValue[],
   );
 

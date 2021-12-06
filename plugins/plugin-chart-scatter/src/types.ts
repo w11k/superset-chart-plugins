@@ -16,13 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { EChartsOption } from 'echarts';
+import { ECharts, EChartsCoreOption } from 'echarts';
+
+export type EchartsStylesProps = {
+  height: number;
+  width: number;
+};
 
 export interface EchartsProps {
   height: number;
   width: number;
-  echartOptions: EChartsOption;
+  echartOptions: EChartsCoreOption;
+  eventHandlers?: EventHandlers;
+  zrEventHandlers?: EventHandlers;
+  selectedValues?: Record<number, string>;
+  forceClear?: boolean;
 }
+
+export type EventHandlers = Record<string, { (props: any): void }>;
 
 export enum LegendOrientation {
   Top = 'top',
@@ -47,3 +58,7 @@ export const DEFAULT_LEGEND_FORM_DATA: EchartsLegendFormData = {
   legendType: LegendType.Scroll,
   showLegend: false,
 };
+
+export interface EchartsHandler {
+  getEchartInstance: () => ECharts | undefined;
+}
