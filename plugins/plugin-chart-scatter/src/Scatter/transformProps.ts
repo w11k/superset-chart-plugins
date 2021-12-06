@@ -87,6 +87,7 @@ export default function transformProps(
     yAxisFormat,
     useMetricForBubbleSize,
     queryMode,
+    groupbyEntity,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
     ...DEFAULT_FORM_DATA,
@@ -140,17 +141,25 @@ export default function transformProps(
 
   const colorFn = CategoricalColorNamespace.getScale(colorScheme as string);
 
-  const sourceDataSet: OptionSourceDataArrayRows = rawData.map(
-    (datum: DataRecord) =>
-      [
-        datum[xField],
-        datum[yField],
-        datum[sizeField] || DEFAULT_BUBBLE_SIZE,
-        ...groupby.map(group => getSeriesName(datum[group])),
-      ] as OptionDataValue[],
-  );
+  const sourceDataSet: OptionSourceDataArrayRows = rawData.map((datum: DataRecord) => {
+    const clustering =
+      groupbyEntity != null
+        ? [getSeriesName(datum[groupbyEntity])]
+        : groupby.map(group => getSeriesName(datum[group]));
+    return [
+      datum[xField],
+      datum[yField],
+      datum[sizeField] || DEFAULT_BUBBLE_SIZE,
+      ...clustering,
+    ] as OptionDataValue[];
+  });
 
-  const allGroups = rawData.map(datum => getSeriesName(datum[groupby[0]]));
+  const allGroups = rawData.map(datum => {
+    if (groupbyEntity != null) {
+      return getSeriesName(datum[groupbyEntity]);
+    }
+    return getSeriesName(datum[groupby[0]]);
+  });
   const uniqueGroups = Array.from(new Set(allGroups).values());
 
   const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>
@@ -217,6 +226,8 @@ export default function transformProps(
       ...transforms,
     ],
   };
+
+  console.log('echartOptions', echartOptions);
 
   return {
     formData,

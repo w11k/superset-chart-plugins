@@ -40,6 +40,7 @@ export type EchartsScatterFormData = QueryFormData &
     size: QueryFormMetric;
     sizeRaw: QueryFormMetric;
     series: string;
+    groupbyEntity: string;
 
     showHighlighting: boolean;
     xAxisLabel: string;

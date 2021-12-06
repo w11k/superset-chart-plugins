@@ -326,6 +326,15 @@ const config: ControlPanelConfig = {
             },
           },
         ],
+        [
+          {
+            name: 'groupby_entity',
+            config: {
+              ...sharedControls.entity,
+              visibility: isRawMode,
+            },
+          },
+        ],
         ['row_limit'],
         ['adhoc_filters'],
         ...bubbleSection,

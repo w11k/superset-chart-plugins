@@ -34,6 +34,7 @@ export default function buildQuery(formData: EchartsScatterFormData) {
       x_raw: 'columns',
       y_raw: 'columns',
       size_raw: 'columns',
+      groupby_entity: 'columns',
     },
   });
 }
