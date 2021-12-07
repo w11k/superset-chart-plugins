@@ -26,6 +26,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@emotion/react": "^11.7.0",
     "@superset-ui/chart-controls": "^0.18.25",
     "@superset-ui/core": "^0.18.25",
     "@superset-ui/plugin-chart-echarts": "^0.18.25",
@@ -41,7 +42,6 @@
     "react-dom": "^16.13.0"
   },
   "devDependencies": {
-    "@emotion/react": "^11.7.0",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.1"
   }

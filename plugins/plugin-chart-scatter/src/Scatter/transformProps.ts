@@ -37,7 +37,7 @@ import {
   getRegressionTransform,
   scaleNumberToBubbleSize,
 } from './transforms';
-import { defaultGrid } from '../../node_modules/@superset-ui/plugin-chart-echarts/lib/defaults';
+import { defaultGrid } from '../defaults';
 import {
   DEFAULT_FORM_DATA,
   EchartsScatterChartProps,

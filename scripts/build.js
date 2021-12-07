@@ -74,16 +74,14 @@ function getPackages(packagePattern, tsOnly = false) {
         .filter(x => !META_PACKAGES.has(x)),
     ),
   ];
-  if (packages.length === 0) {
-    throw new Error('No matching packages');
-  }
-  return `@w11k/${packages.length > 1 ? `{${packages.join(',')}}` : packages[0]}`;
+
+  return '@w11k/*';
 }
 
 let scope = getPackages(glob);
 
 if (shouldLint) {
-  run(`yarn lint --fix {packages,plugins}/${scope}/{src,test}`);
+  run(`npm run lint --fix {packages,plugins}/${scope}/{src,test}`);
 }
 
 if (shouldCleanup) {

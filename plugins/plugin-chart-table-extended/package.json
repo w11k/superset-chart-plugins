@@ -26,6 +26,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@emotion/react": "^11.7.0",
     "@react-icons/all-files": "^4.1.0",
     "@superset-ui/chart-controls": "0.18.13",
     "@superset-ui/core": "0.18.13",
