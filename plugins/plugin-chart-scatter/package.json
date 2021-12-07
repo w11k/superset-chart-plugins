@@ -41,6 +41,7 @@
     "react-dom": "^16.13.0"
   },
   "devDependencies": {
+    "@emotion/react": "^11.7.0",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.1"
   }
