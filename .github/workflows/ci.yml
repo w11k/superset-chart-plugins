@@ -17,10 +17,10 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
-        run: yarn install
+        run: npm install
       - name: Build packages
-        run: yarn build
+        run: npm run build
       - name: Run ESLint
-        run: yarn lint --quiet
+        run: npm run lint --quiet
       - name: Run unit tests
-        run: yarn test
+        run: npm run test
