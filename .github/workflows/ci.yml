@@ -17,9 +17,10 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
-        run: npm install
+        - run: npm -v
+        - run: npm install
       - name: Build packages
-        run: npm run babel
+        run: npm run build
       - name: Run ESLint
         run: npm run lint --quiet
       - name: Run unit tests
