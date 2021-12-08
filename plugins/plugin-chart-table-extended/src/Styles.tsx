@@ -1,4 +1,5 @@
 import { styled } from '@superset-ui/core';
+import { SupersetThemeProps } from '@superset-ui/core/lib/style';
 
 export default styled.div`
   table {
@@ -16,19 +17,19 @@ export default styled.div`
   thead > tr > th {
     padding-right: 1.4em;
     position: relative;
-    background: ${({ theme: { colors } }) => colors.grayscale.light5};
+    background: ${({ theme: { colors } }: SupersetThemeProps) => colors.grayscale.light5};
     text-align: left;
   }
 
   th svg {
-    color: ${({ theme: { colors } }) => colors.grayscale.light2};
+    color: ${({ theme: { colors } }: SupersetThemeProps) => colors.grayscale.light2};
     position: relative;
     vertical-align: middle;
-    margin: 0 ${({ theme: { gridUnit } }) => gridUnit}px;
+    margin: 0 ${({ theme: { gridUnit } }: SupersetThemeProps) => gridUnit}px;
   }
 
   th.is-sorted svg {
-    color: ${({ theme: { colors } }) => colors.grayscale.base};
+    color: ${({ theme: { colors } }: SupersetThemeProps) => colors.grayscale.base};
   }
 
   .table > tbody > tr:first-of-type > td,
@@ -49,7 +50,7 @@ export default styled.div`
   }
 
   .dt-is-null {
-    color: ${({ theme: { colors } }) => colors.grayscale.light1};
+    color: ${({ theme: { colors } }: SupersetThemeProps) => colors.grayscale.light1};
   }
 
   td.dt-is-filter {
@@ -57,12 +58,12 @@ export default styled.div`
   }
 
   td.dt-is-filter:hover {
-    background-color: ${({ theme: { colors } }) => colors.secondary.light4};
+    background-color: ${({ theme: { colors } }: SupersetThemeProps) => colors.secondary.light4};
   }
 
   td.dt-is-active-filter,
   td.dt-is-active-filter:hover {
-    background-color: ${({ theme: { colors } }) => colors.secondary.light3};
+    background-color: ${({ theme: { colors } }: SupersetThemeProps) => colors.secondary.light3};
   }
 
   .dt-global-filter {
@@ -81,7 +82,7 @@ export default styled.div`
 
   .pagination > li > span.dt-pagination-ellipsis:focus,
   .pagination > li > span.dt-pagination-ellipsis:hover {
-    background: ${({ theme: { colors } }) => colors.grayscale.light5};
+    background: ${({ theme: { colors } }: SupersetThemeProps) => colors.grayscale.light5};
   }
 
   .dt-no-results {

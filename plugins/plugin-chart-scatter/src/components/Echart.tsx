@@ -21,13 +21,12 @@ import { styled } from '@superset-ui/core';
 import { ECharts, init } from 'echarts';
 import { EchartsHandler, EchartsProps } from '../types';
 
-// @ts-ignore
 const Styles = styled.div<{
   height: number;
   width: number;
 }>`
-  height: ${({ height }) => height};
-  width: ${({ width }) => width};
+  height: ${({ height }: any) => height};
+  width: ${({ width }: any) => width};
 `;
 
 function Echart(
