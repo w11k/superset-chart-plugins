@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build packages
-        run: npm run build
+        run: npm run babel
       - name: Run ESLint
         run: npm run lint --quiet
       - name: Run unit tests
