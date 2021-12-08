@@ -1,9 +1,24 @@
 import { LegendComponentOption, LineSeriesOption, ScatterSeriesOption } from 'echarts';
 import { CategoricalColorScale } from '@superset-ui/core';
 import { DatasetOption } from 'echarts/types/dist/shared';
-import { TIMESERIES_CONSTANTS } from '../../node_modules/@superset-ui/plugin-chart-echarts/lib/constants';
 import { EchartsScatterFormData } from './types';
 import { LegendOrientation, LegendType } from '../types';
+
+const TIMESERIES_CONSTANTS = {
+  gridOffsetRight: 40,
+  gridOffsetLeft: 20,
+  gridOffsetTop: 20,
+  gridOffsetBottom: 20,
+  gridOffsetBottomZoomable: 80,
+  legendRightTopOffset: 30,
+  legendTopRightOffset: 55,
+  zoomBottom: 30,
+  toolboxTop: 0,
+  toolboxRight: 5,
+  dataZoomStart: 0,
+  dataZoomEnd: 100,
+  yAxisLabelTopOffset: 20,
+};
 
 export function buildScatterSeries(
   seriesName: string,
