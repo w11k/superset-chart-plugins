@@ -1,6 +1,6 @@
 {
   "name": "@w11k/plugin-chart-table-extended",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Superset Chart - Table",
   "main": "lib/index.js",
   "module": "esm/index.js",
