@@ -18,11 +18,6 @@
  */
 import { ECharts, EChartsCoreOption } from 'echarts';
 
-export type EchartsStylesProps = {
-  height: number;
-  width: number;
-};
-
 export interface EchartsProps {
   height: number;
   width: number;

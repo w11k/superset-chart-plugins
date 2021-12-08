@@ -16,12 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import React, { useRef, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { styled } from '@superset-ui/core';
 import { ECharts, init } from 'echarts';
-import { EchartsHandler, EchartsProps, EchartsStylesProps } from '../types';
+import { EchartsHandler, EchartsProps } from '../types';
 
-const Styles = styled.div<EchartsStylesProps>`
+const Styles = styled.div<{
+  height: number;
+  width: number;
+}>`
   height: ${({ height }) => height};
   width: ${({ width }) => width};
 `;
