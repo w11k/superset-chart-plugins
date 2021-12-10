@@ -36,6 +36,7 @@ import {
   getRegressionSeries,
   getRegressionTransform,
   scaleNumberToBubbleSize,
+  getClusteringTransform,
 } from './transforms';
 import { defaultGrid } from '../defaults';
 import {
@@ -47,6 +48,7 @@ import {
 import { DEFAULT_LEGEND_FORM_DATA } from '../types';
 
 registerTransform(transform.regression);
+registerTransform(transform.clustering);
 
 const X_DIMENSION = 0;
 const Y_DIMENSION = 1;
@@ -87,6 +89,9 @@ export default function transformProps(
     yAxisFormat,
     useMetricForBubbleSize,
     clusterEntity,
+    enableClustering,
+    clusterType,
+    amountOfKmeansCluster,
     queryMode,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
@@ -116,6 +121,7 @@ export default function transformProps(
   const bubbleSize = parseInt(_bubbleSize, 10);
   const maxBubbleSize = parseInt(_maxBubbleSize, 10);
   const minBubbleSize = parseInt(_minBubbleSize, 10);
+  const clusterGroups = parseInt(amountOfKmeansCluster, 10);
   const minBubbleValue = rawData.reduce(
     (result, datum) => Math.min(result, datum[sizeField] as number),
     0,
@@ -154,20 +160,47 @@ export default function transformProps(
     ] as OptionDataValue[];
   });
 
+  const sourceDataSetDimension = sourceDataSet[0]?.length ? sourceDataSet[0].length : 0;
+
   const allGroups = rawData.map(datum => {
-    if (clusterEntity && !isAggMode) {
+    if (clusterType === 'Cluster by Entity' && enableClustering && clusterEntity && !isAggMode) {
       return getSeriesName(datum[clusterEntity as string]);
     }
     return getSeriesName(datum[groupby[0]]);
   });
 
   const uniqueGroups = Array.from(new Set(allGroups).values());
+  let visualMap;
+
+  if (clusterType === 'hierarchical kMeans' && enableClustering && !isAggMode) {
+    const pieces = [];
+    for (let i = 0; i < clusterGroups; i += 1) {
+      pieces.push({
+        value: i,
+        label: `${FALLBACK_SERIES_NAME} - ${i}`,
+        color: colorFn(i),
+      });
+    }
+
+    visualMap = {
+      type: 'piecewise',
+      top: 'middle',
+      min: 0,
+      max: clusterGroups,
+      dimension: sourceDataSetDimension,
+      pieces,
+      splitNumber: clusterGroups,
+    };
+  }
 
   const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>
     buildScatterSeries(group, index + 1, colorFn, showHighlighting, showLabels, symbolSizeFn),
   );
 
-  const scatterTransforms: DatasetOption[] = buildScatterTransforms(uniqueGroups, NAME_DIMENSION);
+  const scatterTransforms: DatasetOption[] =
+    clusterType === 'hierarchical kMeans' && enableClustering && !isAggMode
+      ? getClusteringTransform(clusterGroups, sourceDataSetDimension)
+      : buildScatterTransforms(uniqueGroups, NAME_DIMENSION);
 
   const series = [
     ...scatterSeries,
@@ -214,6 +247,7 @@ export default function transformProps(
       name: yAxisTitle,
       axisLabel: { formatter: yAxisFormatter },
     },
+    visualMap,
     series,
     tooltip: {
       trigger: 'item',

@@ -53,6 +53,7 @@ export function buildScatterTransforms(uniqueGroups: string[], dimension: number
   return uniqueGroups.map(group => ({
     transform: {
       type: 'filter',
+      // print: true, // debug output
       config: { dimension, eq: group },
     },
   }));
@@ -90,6 +91,26 @@ export function getRegressionTransform(
       },
     },
   };
+}
+
+export function getClusteringTransform(
+  clusterCount: number,
+  dimensionClusterIndex: number,
+): DatasetOption[] {
+  return [
+    {
+      transform: {
+        type: 'ecStat:clustering',
+        // print: true, // debug output
+        config: {
+          clusterCount,
+          outputType: 'single',
+          dimensions: [0, 1],
+          outputClusterIndexDimension: dimensionClusterIndex,
+        },
+      },
+    },
+  ];
 }
 
 export function scaleNumberToBubbleSize(

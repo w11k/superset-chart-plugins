@@ -41,6 +41,7 @@ export type EchartsScatterFormData = QueryFormData &
     sizeRaw: QueryFormMetric;
     clusterEntity: QueryFormMetric;
     clusterType: string;
+    amountOfKmeansCluster: string;
     series: string;
 
     showHighlighting: boolean;

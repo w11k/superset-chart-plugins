@@ -272,6 +272,22 @@ const clusteringSection = [
       },
     },
   ],
+  [
+    {
+      name: `amount_of_kmeans_cluster`,
+      config: {
+        type: 'SelectControl',
+        freeForm: true,
+        label: t('Number of clusters'),
+        default: '4',
+        choices: formatSelectOptions(['1', '2', '3', '4', '5', '10']),
+        visibility: ({ controls }: ControlPanelsContainerProps) =>
+          Boolean(controls?.enable_clustering?.value) &&
+          Boolean(controls?.cluster_type?.value === 'hierarchical kMeans') &&
+          isRawMode({ controls }),
+      },
+    },
+  ],
 ];
 
 const config: ControlPanelConfig = {

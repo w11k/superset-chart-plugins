@@ -271,6 +271,120 @@ describe('Scatter transformProps', () => {
     ]);
   });
 
+  it('should transform chart props for raw data in kmeans chlusters', () => {
+    const formData = {
+      query_mode: 'raw',
+      x_raw: 'DISTANCE',
+      y_raw: 'DEPARTURE_DELAY',
+      groupby: [],
+      enable_clustering: true,
+      cluster_type: 'hierarchical kMeans',
+      amount_of_kmeans_cluster: '2',
+      use_metric_for_bubble_size: true,
+      size_raw: 'AIR_TIME',
+      min_bubble_size: '10',
+      max_bubble_size: '50',
+      show_regression: false,
+      show_regression_label: true,
+      regression: 'linear',
+      regressionOrder: '3',
+      color_scheme: 'supersetColors',
+    } as unknown as EchartsScatterFormData;
+
+    const rawChartProps = new ChartProps({
+      formData,
+      width: 800,
+      height: 600,
+      queriesData: [
+        {
+          data: [
+            {
+              DISTANCE: 1448,
+              DEPARTURE_DELAY: -11,
+              AIR_TIME: 169,
+            },
+            {
+              DISTANCE: 2330,
+              DEPARTURE_DELAY: -5,
+              AIR_TIME: 263,
+            },
+            {
+              DISTANCE: 2130,
+              DEPARTURE_DELAY: -5,
+              AIR_TIME: 273,
+            },
+            {
+              DISTANCE: 2240,
+              DEPARTURE_DELAY: -5,
+              AIR_TIME: 273,
+            },
+            {
+              DISTANCE: 2250,
+              DEPARTURE_DELAY: -5,
+              AIR_TIME: 273,
+            },
+            {
+              DISTANCE: 2260,
+              DEPARTURE_DELAY: -5,
+              AIR_TIME: 273,
+            },
+            {
+              DISTANCE: 1348,
+              DEPARTURE_DELAY: -12,
+              AIR_TIME: 273,
+            },
+          ],
+        },
+      ],
+    }) as unknown as EchartsScatterChartProps;
+
+    // @ts-ignore
+    const result = transformProps(rawChartProps);
+    const series = result.echartOptions.series as SeriesOption[];
+    expect(series.length).toBe(1);
+    expect(series[0]).toEqual(
+      expect.objectContaining({
+        name: 'Data',
+        type: 'scatter',
+        datasetIndex: 1,
+        animation: false,
+        label: {
+          show: false,
+          formatter: '{a}',
+          minMargin: 10,
+          position: 'top',
+        },
+      }),
+    );
+
+    const dataset = result.echartOptions.dataset as DatasetOption[];
+    expect(dataset.length).toBe(2);
+    expect(dataset).toEqual([
+      {
+        source: [
+          [1448, -11, 169, 'Data'],
+          [2330, -5, 263, 'Data'],
+          [2130, -5, 273, 'Data'],
+          [2240, -5, 273, 'Data'],
+          [2250, -5, 273, 'Data'],
+          [2260, -5, 273, 'Data'],
+          [1348, -12, 273, 'Data'],
+        ],
+      },
+      {
+        transform: {
+          type: 'ecStat:clustering',
+          config: {
+            clusterCount: 2,
+            outputType: 'single',
+            dimensions: [0, 1],
+            outputClusterIndexDimension: 4,
+          },
+        },
+      },
+    ]);
+  });
+
   it('should transform chart props for aggregated data mode without regression', () => {
     const formData = {
       query_mode: QueryMode.aggregate,
