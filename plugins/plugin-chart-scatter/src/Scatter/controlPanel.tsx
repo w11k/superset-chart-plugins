@@ -43,7 +43,7 @@ export function getQueryMode(controls: ControlStateMapping): QueryMode {
   return hasRawColumns ? QueryMode.raw : QueryMode.aggregate;
 }
 
-const { useMetricForBubbleSize } = DEFAULT_FORM_DATA;
+const { useMetricForBubbleSize, useClustering } = DEFAULT_FORM_DATA;
 
 const requiredEntity = {
   ...sharedControls.entity,
@@ -64,12 +64,16 @@ const queryMode: ControlConfig<'RadioButtonControl'> = {
     [QueryMode.raw, QueryModeLabel[QueryMode.raw]],
   ],
   mapStateToProps: ({ controls }) => ({ value: getQueryMode(controls) }),
-  rerender: ['x', 'y', 'x_raw', 'y_raw', 'size', 'size_raw'],
+  rerender: ['x', 'y', 'x_raw', 'y_raw', 'size', 'size_raw', 'cluster_entity', 'enable_clustering'],
 };
 
 function isQueryMode(mode: QueryMode) {
   return ({ controls }: Pick<ControlPanelsContainerProps, 'controls'>) =>
     getQueryMode(controls) === mode;
+}
+
+function ClusteringHeader() {
+  return <h1 className="section-header">{t('Clustering')}</h1>;
 }
 
 const isAggMode = isQueryMode(QueryMode.aggregate);
@@ -220,6 +224,56 @@ const bubbleSection = [
   ],
 ];
 
+const clusteringSection = [
+  [
+    {
+      name: 'header',
+      config: {
+        type: ClusteringHeader,
+        visibility: isRawMode,
+      },
+    },
+  ],
+  [
+    {
+      name: 'enable_clustering',
+      config: {
+        type: 'CheckboxControl',
+        label: t('Enable Clustering'),
+        renderTrigger: false,
+        default: useClustering,
+        description: t('Whether to enable clustering'),
+        visibility: isRawMode,
+      },
+    },
+  ],
+  [
+    {
+      name: `cluster_type`,
+      config: {
+        type: 'SelectControl',
+        freeForm: false,
+        label: t('Clustering Type'),
+        choices: formatSelectOptions(['hierarchical kMeans', 'Cluster by Entity']),
+        visibility: ({ controls }: ControlPanelsContainerProps) =>
+          Boolean(controls?.enable_clustering?.value) && isRawMode({ controls }),
+      },
+    },
+  ],
+  [
+    {
+      name: `cluster_entity`,
+      config: {
+        ...optionalEntity,
+        visibility: ({ controls }: ControlPanelsContainerProps) =>
+          Boolean(controls?.enable_clustering?.value) &&
+          Boolean(controls?.cluster_type?.value === 'Cluster by Entity') &&
+          isRawMode({ controls }),
+      },
+    },
+  ],
+];
+
 const config: ControlPanelConfig = {
   controlPanelSections: [
     sections.legacyRegularTime,
@@ -330,6 +384,7 @@ const config: ControlPanelConfig = {
         ['adhoc_filters'],
         ...bubbleSection,
         ...regressionSection,
+        ...clusteringSection,
       ],
     },
     {

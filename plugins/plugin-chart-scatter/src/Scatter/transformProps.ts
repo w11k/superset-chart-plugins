@@ -86,6 +86,7 @@ export default function transformProps(
     yAxisTitle,
     yAxisFormat,
     useMetricForBubbleSize,
+    clusterEntity,
     queryMode,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
@@ -110,8 +111,8 @@ export default function transformProps(
   const xField = isAggMode ? getMetricLabel(x) : getMetricLabel(xRaw);
   const yField = isAggMode ? getMetricLabel(y) : getMetricLabel(yRaw);
   const sizeField = isAggMode ? getMetricLabel(size || '') : getMetricLabel(sizeRaw || '');
-
   const groupby = isAggMode && _groupby && _groupby.length > 0 ? _groupby : [getSeriesName()];
+  const clusteringEntity = getMetricLabel(clusterEntity || '');
   const bubbleSize = parseInt(_bubbleSize, 10);
   const maxBubbleSize = parseInt(_maxBubbleSize, 10);
   const minBubbleSize = parseInt(_minBubbleSize, 10);
@@ -140,17 +141,26 @@ export default function transformProps(
 
   const colorFn = CategoricalColorNamespace.getScale(colorScheme as string);
 
-  const sourceDataSet: OptionSourceDataArrayRows = rawData.map(
-    (datum: DataRecord) =>
-      [
-        datum[xField],
-        datum[yField],
-        datum[sizeField] || DEFAULT_BUBBLE_SIZE,
-        ...groupby.map(group => getSeriesName(datum[group as string])),
-      ] as OptionDataValue[],
-  );
+  const sourceDataSet: OptionSourceDataArrayRows = rawData.map((datum: DataRecord) => {
+    const clustering =
+      clusteringEntity != null && !isAggMode
+        ? [getSeriesName(datum[clusteringEntity])]
+        : groupby.map(group => getSeriesName(datum[group as string]));
+    return [
+      datum[xField],
+      datum[yField],
+      datum[sizeField] || DEFAULT_BUBBLE_SIZE,
+      ...clustering,
+    ] as OptionDataValue[];
+  });
 
-  const allGroups = rawData.map(datum => getSeriesName(datum[groupby[0]]));
+  const allGroups = rawData.map(datum => {
+    if (clusterEntity && !isAggMode) {
+      return getSeriesName(datum[clusterEntity as string]);
+    }
+    return getSeriesName(datum[groupby[0]]);
+  });
+
   const uniqueGroups = Array.from(new Set(allGroups).values());
 
   const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>

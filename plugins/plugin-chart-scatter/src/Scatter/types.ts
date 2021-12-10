@@ -39,6 +39,8 @@ export type EchartsScatterFormData = QueryFormData &
     yRaw: QueryFormMetric;
     size: QueryFormMetric;
     sizeRaw: QueryFormMetric;
+    clusterEntity: QueryFormMetric;
+    clusterType: string;
     series: string;
 
     showHighlighting: boolean;
@@ -53,6 +55,8 @@ export type EchartsScatterFormData = QueryFormData &
 
     bubbleSize: string;
     useMetricForBubbleSize: boolean;
+    useClustering: boolean;
+    enableClustering: boolean;
     queryMode: QueryMode;
   };
 
@@ -74,6 +78,7 @@ export const DEFAULT_FORM_DATA: Partial<EchartsScatterFormData> = {
   showRegressionLabel: false,
   regression: 'linear',
   useMetricForBubbleSize: false,
+  useClustering: false,
 };
 
 export interface ScatterChartTransformedProps {

@@ -32,6 +32,7 @@ describe('Scatter transformProps', () => {
         },
       ],
     }) as unknown as EchartsScatterChartProps;
+    // @ts-ignore
     const result = transformProps(rawChartProps);
 
     it('x axis', () => {
@@ -116,6 +117,7 @@ describe('Scatter transformProps', () => {
       ],
     }) as unknown as EchartsScatterChartProps;
 
+    // @ts-ignore
     const result = transformProps(rawChartProps);
     const series = result.echartOptions.series as SeriesOption[];
     expect(series.length).toBe(1);
@@ -149,6 +151,120 @@ describe('Scatter transformProps', () => {
           config: {
             dimension: 3,
             eq: 'Data',
+          },
+        },
+      },
+    ]);
+  });
+
+  it('should transform chart props for raw data mode with clustering mode enabled', () => {
+    const formData = {
+      query_mode: 'raw',
+      x_raw: 'DISTANCE',
+      y_raw: 'DEPARTURE_DELAY',
+      groupby: [],
+      enable_clustering: true,
+      cluster_type: 'Cluster by Entity',
+      cluster_entity: 'AIRLINE',
+      use_metric_for_bubble_size: true,
+      size_raw: 'AIR_TIME',
+      min_bubble_size: '10',
+      max_bubble_size: '50',
+      show_regression: false,
+      show_regression_label: true,
+      regression: 'linear',
+      regressionOrder: '3',
+      color_scheme: 'supersetColors',
+    } as unknown as EchartsScatterFormData;
+
+    const rawChartProps = new ChartProps({
+      formData,
+      width: 800,
+      height: 600,
+      queriesData: [
+        {
+          data: [
+            {
+              DISTANCE: 1448,
+              DEPARTURE_DELAY: -11,
+              AIR_TIME: 169,
+              AIRLINE: 'LH',
+            },
+            {
+              DISTANCE: 2330,
+              DEPARTURE_DELAY: -8,
+              AIR_TIME: 263,
+              AIRLINE: 'LH',
+            },
+            {
+              DISTANCE: 2130,
+              DEPARTURE_DELAY: -5,
+              AIR_TIME: 273,
+              AIRLINE: 'Air',
+            },
+          ],
+        },
+      ],
+    }) as unknown as EchartsScatterChartProps;
+
+    // @ts-ignore
+    const result = transformProps(rawChartProps);
+    const series = result.echartOptions.series as SeriesOption[];
+    expect(series.length).toBe(2);
+    expect(series[0]).toEqual(
+      expect.objectContaining({
+        name: 'LH',
+        type: 'scatter',
+        datasetIndex: 1,
+        animation: false,
+        label: {
+          show: false,
+          formatter: '{a}',
+          minMargin: 10,
+          position: 'top',
+        },
+      }),
+    );
+    expect(series[1]).toEqual(
+      expect.objectContaining({
+        name: 'Air',
+        type: 'scatter',
+        datasetIndex: 2,
+        animation: false,
+        label: {
+          show: false,
+          formatter: '{a}',
+          minMargin: 10,
+          position: 'top',
+        },
+      }),
+    );
+
+    const dataset = result.echartOptions.dataset as DatasetOption[];
+    expect(dataset.length).toBe(3);
+    expect(dataset).toEqual([
+      {
+        source: [
+          [1448, -11, 169, 'LH'],
+          [2330, -8, 263, 'LH'],
+          [2130, -5, 273, 'Air'],
+        ],
+      },
+      {
+        transform: {
+          type: 'filter',
+          config: {
+            dimension: 3,
+            eq: 'LH',
+          },
+        },
+      },
+      {
+        transform: {
+          type: 'filter',
+          config: {
+            dimension: 3,
+            eq: 'Air',
           },
         },
       },
@@ -271,6 +387,7 @@ describe('Scatter transformProps', () => {
       ],
     }) as unknown as EchartsScatterChartProps;
 
+    // @ts-ignore
     const result = transformProps(aggregatedChartProps);
     const series = result.echartOptions.series as SeriesOption[];
     expect(series.length).toBe(2);
@@ -373,6 +490,7 @@ describe('Scatter transformProps', () => {
       ],
     }) as unknown as EchartsScatterChartProps;
 
+    // @ts-ignore
     const result = transformProps(rawChartProps);
     const series = result.echartOptions.series as SeriesOption[];
     expect(series.length).toBe(2);
