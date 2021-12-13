@@ -32,7 +32,7 @@ export default function buildQuery(formData: EchartsScatterFormData) {
   if (
     queryMode === QueryMode.raw &&
     formData.enable_clustering &&
-    formData.cluster_type === 'Cluster by Entity'
+    formData.cluster_type === 'cluster_by_entity'
   ) {
     return buildQueryContext(formData, {
       queryFields: {

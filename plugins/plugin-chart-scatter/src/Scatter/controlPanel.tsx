@@ -254,7 +254,10 @@ const clusteringSection = [
         type: 'SelectControl',
         freeForm: false,
         label: t('Clustering Type'),
-        choices: formatSelectOptions(['hierarchical kMeans', 'Cluster by Entity']),
+        choices: formatSelectOptions([
+          ['hierarchical_kmeans', 'hierarchical kMeans'],
+          ['cluster_by_entity', 'Cluster by Entity'],
+        ]),
         visibility: ({ controls }: ControlPanelsContainerProps) =>
           Boolean(controls?.enable_clustering?.value) && isRawMode({ controls }),
       },
@@ -267,7 +270,7 @@ const clusteringSection = [
         ...optionalEntity,
         visibility: ({ controls }: ControlPanelsContainerProps) =>
           Boolean(controls?.enable_clustering?.value) &&
-          Boolean(controls?.cluster_type?.value === 'Cluster by Entity') &&
+          Boolean(controls?.cluster_type?.value === 'cluster_by_entity') &&
           isRawMode({ controls }),
       },
     },
@@ -283,7 +286,7 @@ const clusteringSection = [
         choices: formatSelectOptions(['1', '2', '3', '4', '5', '10']),
         visibility: ({ controls }: ControlPanelsContainerProps) =>
           Boolean(controls?.enable_clustering?.value) &&
-          Boolean(controls?.cluster_type?.value === 'hierarchical kMeans') &&
+          Boolean(controls?.cluster_type?.value === 'hierarchical_kmeans') &&
           isRawMode({ controls }),
       },
     },

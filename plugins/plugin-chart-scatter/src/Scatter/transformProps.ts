@@ -26,7 +26,11 @@ import {
 import { EChartsOption, LineSeriesOption, registerTransform, ScatterSeriesOption } from 'echarts';
 // @ts-ignore type information is missing. see: https://github.com/ecomfe/echarts-stat/issues/35
 import { transform } from 'echarts-stat';
-import { DatasetOption, TopLevelFormatterParams } from 'echarts/types/dist/shared';
+import {
+  DatasetOption,
+  PiecewiseVisualMapOption,
+  TopLevelFormatterParams,
+} from 'echarts/types/dist/shared';
 import { DataRecordValue } from '@superset-ui/core/lib/query/types/QueryResponse';
 import { OptionDataValue, OptionSourceDataArrayRows } from 'echarts/types/src/util/types';
 import {
@@ -99,6 +103,10 @@ export default function transformProps(
     ...formData,
   };
 
+  const rawData = queriesData[0].data;
+
+  const isAggMode = queryMode === QueryMode.aggregate;
+
   function getSeriesName(name?: DataRecordValue) {
     if (typeof name === 'number') {
       return `${name}`;
@@ -106,12 +114,11 @@ export default function transformProps(
     if (typeof name === 'string') {
       return name;
     }
+    if (clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode) {
+      return 'Cluster';
+    }
     return FALLBACK_SERIES_NAME;
   }
-
-  const rawData = queriesData[0].data;
-
-  const isAggMode = queryMode === QueryMode.aggregate;
 
   const xField = isAggMode ? getMetricLabel(x) : getMetricLabel(xRaw);
   const yField = isAggMode ? getMetricLabel(y) : getMetricLabel(yRaw);
@@ -130,6 +137,9 @@ export default function transformProps(
     (result, datum) => Math.max(result, datum[sizeField] as number),
     0,
   );
+
+  const showLegends =
+    clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode ? false : showLegend;
 
   function symbolSizeFn(params: number[]) {
     if (!useMetricForBubbleSize) {
@@ -163,34 +173,44 @@ export default function transformProps(
   const sourceDataSetDimension = sourceDataSet[0]?.length ? sourceDataSet[0].length : 0;
 
   const allGroups = rawData.map(datum => {
-    if (clusterType === 'Cluster by Entity' && enableClustering && clusterEntity && !isAggMode) {
+    if (clusterType === 'cluster_by_entity' && enableClustering && clusterEntity && !isAggMode) {
       return getSeriesName(datum[clusterEntity as string]);
     }
     return getSeriesName(datum[groupby[0]]);
   });
 
   const uniqueGroups = Array.from(new Set(allGroups).values());
-  let visualMap;
 
-  if (clusterType === 'hierarchical kMeans' && enableClustering && !isAggMode) {
-    const pieces = [];
-    for (let i = 0; i < clusterGroups; i += 1) {
-      pieces.push({
-        value: i,
-        label: `${FALLBACK_SERIES_NAME} - ${i}`,
-        color: colorFn(i),
-      });
+  function getVisualMap(): PiecewiseVisualMapOption[] {
+    if (clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode) {
+      const pieces = [];
+      for (let i = 0; i < clusterGroups; i += 1) {
+        pieces.push({
+          value: i,
+          label: `${
+            clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode
+              ? 'Cluster'
+              : FALLBACK_SERIES_NAME
+          } - ${i}`,
+          color: colorFn(i),
+        });
+      }
+
+      return [
+        {
+          type: 'piecewise',
+          top: 'top',
+          orient: 'horizontal',
+          min: 0,
+          max: clusterGroups,
+          dimension: sourceDataSetDimension,
+          pieces,
+          splitNumber: clusterGroups,
+          seriesIndex: 0,
+        },
+      ];
     }
-
-    visualMap = {
-      type: 'piecewise',
-      top: 'middle',
-      min: 0,
-      max: clusterGroups,
-      dimension: sourceDataSetDimension,
-      pieces,
-      splitNumber: clusterGroups,
-    };
+    return [];
   }
 
   const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>
@@ -198,7 +218,7 @@ export default function transformProps(
   );
 
   const scatterTransforms: DatasetOption[] =
-    clusterType === 'hierarchical kMeans' && enableClustering && !isAggMode
+    clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode
       ? getClusteringTransform(clusterGroups, sourceDataSetDimension)
       : buildScatterTransforms(uniqueGroups, NAME_DIMENSION);
 
@@ -237,7 +257,7 @@ export default function transformProps(
       ...defaultGrid,
     },
     legend: {
-      ...getLegendProps(legendType, legendOrientation, showLegend),
+      ...getLegendProps(legendType, legendOrientation, showLegends),
     },
     xAxis: {
       name: xAxisTitle,
@@ -247,7 +267,7 @@ export default function transformProps(
       name: yAxisTitle,
       axisLabel: { formatter: yAxisFormatter },
     },
-    visualMap,
+    visualMap: getVisualMap(),
     series,
     tooltip: {
       trigger: 'item',

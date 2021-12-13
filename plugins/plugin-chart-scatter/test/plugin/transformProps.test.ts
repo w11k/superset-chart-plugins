@@ -2,8 +2,7 @@ import { ChartProps, QueryMode } from '@superset-ui/core';
 import { SeriesOption } from 'echarts';
 import { DatasetOption } from 'echarts/types/dist/shared';
 import transformProps from '../../src/Scatter/transformProps';
-import { EchartsScatterChartProps } from '../../lib/Scatter/types';
-import { EchartsScatterFormData } from '../../src/Scatter/types';
+import { EchartsScatterChartProps, EchartsScatterFormData } from '../../src/Scatter/types';
 import { LegendOrientation, LegendType } from '../../lib/types';
 
 describe('Scatter transformProps', () => {
@@ -32,7 +31,6 @@ describe('Scatter transformProps', () => {
         },
       ],
     }) as unknown as EchartsScatterChartProps;
-    // @ts-ignore
     const result = transformProps(rawChartProps);
 
     it('x axis', () => {
@@ -117,7 +115,6 @@ describe('Scatter transformProps', () => {
       ],
     }) as unknown as EchartsScatterChartProps;
 
-    // @ts-ignore
     const result = transformProps(rawChartProps);
     const series = result.echartOptions.series as SeriesOption[];
     expect(series.length).toBe(1);
@@ -164,7 +161,7 @@ describe('Scatter transformProps', () => {
       y_raw: 'DEPARTURE_DELAY',
       groupby: [],
       enable_clustering: true,
-      cluster_type: 'Cluster by Entity',
+      cluster_type: 'cluster_by_entity',
       cluster_entity: 'AIRLINE',
       use_metric_for_bubble_size: true,
       size_raw: 'AIR_TIME',
@@ -207,7 +204,6 @@ describe('Scatter transformProps', () => {
       ],
     }) as unknown as EchartsScatterChartProps;
 
-    // @ts-ignore
     const result = transformProps(rawChartProps);
     const series = result.echartOptions.series as SeriesOption[];
     expect(series.length).toBe(2);
@@ -278,7 +274,7 @@ describe('Scatter transformProps', () => {
       y_raw: 'DEPARTURE_DELAY',
       groupby: [],
       enable_clustering: true,
-      cluster_type: 'hierarchical kMeans',
+      cluster_type: 'hierarchical_kmeans',
       amount_of_kmeans_cluster: '2',
       use_metric_for_bubble_size: true,
       size_raw: 'AIR_TIME',
@@ -338,13 +334,12 @@ describe('Scatter transformProps', () => {
       ],
     }) as unknown as EchartsScatterChartProps;
 
-    // @ts-ignore
     const result = transformProps(rawChartProps);
     const series = result.echartOptions.series as SeriesOption[];
     expect(series.length).toBe(1);
     expect(series[0]).toEqual(
       expect.objectContaining({
-        name: 'Data',
+        name: 'Cluster',
         type: 'scatter',
         datasetIndex: 1,
         animation: false,
@@ -362,13 +357,13 @@ describe('Scatter transformProps', () => {
     expect(dataset).toEqual([
       {
         source: [
-          [1448, -11, 169, 'Data'],
-          [2330, -5, 263, 'Data'],
-          [2130, -5, 273, 'Data'],
-          [2240, -5, 273, 'Data'],
-          [2250, -5, 273, 'Data'],
-          [2260, -5, 273, 'Data'],
-          [1348, -12, 273, 'Data'],
+          [1448, -11, 169, 'Cluster'],
+          [2330, -5, 263, 'Cluster'],
+          [2130, -5, 273, 'Cluster'],
+          [2240, -5, 273, 'Cluster'],
+          [2250, -5, 273, 'Cluster'],
+          [2260, -5, 273, 'Cluster'],
+          [1348, -12, 273, 'Cluster'],
         ],
       },
       {
@@ -501,7 +496,6 @@ describe('Scatter transformProps', () => {
       ],
     }) as unknown as EchartsScatterChartProps;
 
-    // @ts-ignore
     const result = transformProps(aggregatedChartProps);
     const series = result.echartOptions.series as SeriesOption[];
     expect(series.length).toBe(2);
@@ -604,7 +598,6 @@ describe('Scatter transformProps', () => {
       ],
     }) as unknown as EchartsScatterChartProps;
 
-    // @ts-ignore
     const result = transformProps(rawChartProps);
     const series = result.echartOptions.series as SeriesOption[];
     expect(series.length).toBe(2);

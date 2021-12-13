@@ -40,7 +40,7 @@ export type EchartsScatterFormData = QueryFormData &
     size: QueryFormMetric;
     sizeRaw: QueryFormMetric;
     clusterEntity: QueryFormMetric;
-    clusterType: string;
+    clusterType: 'hierarchical_kmeans' | 'cluster_by_entity';
     amountOfKmeansCluster: string;
     series: string;
 
