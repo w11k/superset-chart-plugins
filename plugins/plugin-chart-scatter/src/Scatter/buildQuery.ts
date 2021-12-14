@@ -29,6 +29,21 @@ export default function buildQuery(formData: EchartsScatterFormData) {
     ]);
   }
 
+  if (
+    queryMode === QueryMode.raw &&
+    formData.enable_clustering &&
+    formData.cluster_type === 'cluster_by_entity'
+  ) {
+    return buildQueryContext(formData, {
+      queryFields: {
+        x_raw: 'columns',
+        y_raw: 'columns',
+        size_raw: 'columns',
+        cluster_entity: 'columns',
+      },
+    });
+  }
+
   return buildQueryContext(formData, {
     queryFields: {
       x_raw: 'columns',

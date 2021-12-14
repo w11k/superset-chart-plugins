@@ -26,7 +26,11 @@ import {
 import { EChartsOption, LineSeriesOption, registerTransform, ScatterSeriesOption } from 'echarts';
 // @ts-ignore type information is missing. see: https://github.com/ecomfe/echarts-stat/issues/35
 import { transform } from 'echarts-stat';
-import { DatasetOption, TopLevelFormatterParams } from 'echarts/types/dist/shared';
+import {
+  DatasetOption,
+  PiecewiseVisualMapOption,
+  TopLevelFormatterParams,
+} from 'echarts/types/dist/shared';
 import { DataRecordValue } from '@superset-ui/core/lib/query/types/QueryResponse';
 import { OptionDataValue, OptionSourceDataArrayRows } from 'echarts/types/src/util/types';
 import {
@@ -36,6 +40,7 @@ import {
   getRegressionSeries,
   getRegressionTransform,
   scaleNumberToBubbleSize,
+  getClusteringTransform,
 } from './transforms';
 import { defaultGrid } from '../defaults';
 import {
@@ -47,6 +52,7 @@ import {
 import { DEFAULT_LEGEND_FORM_DATA } from '../types';
 
 registerTransform(transform.regression);
+registerTransform(transform.clustering);
 
 const X_DIMENSION = 0;
 const Y_DIMENSION = 1;
@@ -86,12 +92,20 @@ export default function transformProps(
     yAxisTitle,
     yAxisFormat,
     useMetricForBubbleSize,
+    clusterEntity,
+    enableClustering,
+    clusterType,
+    amountOfKmeansCluster,
     queryMode,
   }: EchartsScatterFormData = {
     ...DEFAULT_LEGEND_FORM_DATA,
     ...DEFAULT_FORM_DATA,
     ...formData,
   };
+
+  const rawData = queriesData[0].data;
+
+  const isAggMode = queryMode === QueryMode.aggregate;
 
   function getSeriesName(name?: DataRecordValue) {
     if (typeof name === 'number') {
@@ -100,21 +114,21 @@ export default function transformProps(
     if (typeof name === 'string') {
       return name;
     }
+    if (clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode) {
+      return 'Cluster';
+    }
     return FALLBACK_SERIES_NAME;
   }
-
-  const rawData = queriesData[0].data;
-
-  const isAggMode = queryMode === QueryMode.aggregate;
 
   const xField = isAggMode ? getMetricLabel(x) : getMetricLabel(xRaw);
   const yField = isAggMode ? getMetricLabel(y) : getMetricLabel(yRaw);
   const sizeField = isAggMode ? getMetricLabel(size || '') : getMetricLabel(sizeRaw || '');
-
   const groupby = isAggMode && _groupby && _groupby.length > 0 ? _groupby : [getSeriesName()];
+  const clusteringEntity = getMetricLabel(clusterEntity || '');
   const bubbleSize = parseInt(_bubbleSize, 10);
   const maxBubbleSize = parseInt(_maxBubbleSize, 10);
   const minBubbleSize = parseInt(_minBubbleSize, 10);
+  const clusterGroups = parseInt(amountOfKmeansCluster, 10);
   const minBubbleValue = rawData.reduce(
     (result, datum) => Math.min(result, datum[sizeField] as number),
     0,
@@ -123,6 +137,9 @@ export default function transformProps(
     (result, datum) => Math.max(result, datum[sizeField] as number),
     0,
   );
+
+  const showLegends =
+    clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode ? false : showLegend;
 
   function symbolSizeFn(params: number[]) {
     if (!useMetricForBubbleSize) {
@@ -140,24 +157,71 @@ export default function transformProps(
 
   const colorFn = CategoricalColorNamespace.getScale(colorScheme as string);
 
-  const sourceDataSet: OptionSourceDataArrayRows = rawData.map(
-    (datum: DataRecord) =>
-      [
-        datum[xField],
-        datum[yField],
-        datum[sizeField] || DEFAULT_BUBBLE_SIZE,
-        ...groupby.map(group => getSeriesName(datum[group as string])),
-      ] as OptionDataValue[],
-  );
+  const sourceDataSet: OptionSourceDataArrayRows = rawData.map((datum: DataRecord) => {
+    const clustering =
+      clusteringEntity != null && !isAggMode
+        ? [getSeriesName(datum[clusteringEntity])]
+        : groupby.map(group => getSeriesName(datum[group as string]));
+    return [
+      datum[xField],
+      datum[yField],
+      datum[sizeField] || DEFAULT_BUBBLE_SIZE,
+      ...clustering,
+    ] as OptionDataValue[];
+  });
 
-  const allGroups = rawData.map(datum => getSeriesName(datum[groupby[0]]));
+  const sourceDataSetDimension = sourceDataSet[0]?.length ? sourceDataSet[0].length : 0;
+
+  const allGroups = rawData.map(datum => {
+    if (clusterType === 'cluster_by_entity' && enableClustering && clusterEntity && !isAggMode) {
+      return getSeriesName(datum[clusterEntity as string]);
+    }
+    return getSeriesName(datum[groupby[0]]);
+  });
+
   const uniqueGroups = Array.from(new Set(allGroups).values());
+
+  function getVisualMap(): PiecewiseVisualMapOption[] {
+    if (clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode) {
+      const pieces = [];
+      for (let i = 0; i < clusterGroups; i += 1) {
+        pieces.push({
+          value: i,
+          label: `${
+            clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode
+              ? 'Cluster'
+              : FALLBACK_SERIES_NAME
+          } - ${i + 1}`,
+          color: colorFn(i),
+        });
+      }
+
+      return [
+        {
+          type: 'piecewise',
+          top: 'top',
+          right: 0,
+          orient: 'horizontal',
+          min: 0,
+          max: clusterGroups,
+          dimension: sourceDataSetDimension,
+          pieces,
+          splitNumber: clusterGroups,
+          seriesIndex: 0,
+        },
+      ];
+    }
+    return [];
+  }
 
   const scatterSeries: ScatterSeriesOption[] = uniqueGroups.map((group, index) =>
     buildScatterSeries(group, index + 1, colorFn, showHighlighting, showLabels, symbolSizeFn),
   );
 
-  const scatterTransforms: DatasetOption[] = buildScatterTransforms(uniqueGroups, NAME_DIMENSION);
+  const scatterTransforms: DatasetOption[] =
+    clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode
+      ? getClusteringTransform(clusterGroups, sourceDataSetDimension)
+      : buildScatterTransforms(uniqueGroups, NAME_DIMENSION);
 
   const series = [
     ...scatterSeries,
@@ -194,7 +258,7 @@ export default function transformProps(
       ...defaultGrid,
     },
     legend: {
-      ...getLegendProps(legendType, legendOrientation, showLegend),
+      ...getLegendProps(legendType, legendOrientation, showLegends),
     },
     xAxis: {
       name: xAxisTitle,
@@ -204,6 +268,7 @@ export default function transformProps(
       name: yAxisTitle,
       axisLabel: { formatter: yAxisFormatter },
     },
+    visualMap: getVisualMap(),
     series,
     tooltip: {
       trigger: 'item',
