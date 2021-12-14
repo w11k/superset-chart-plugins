@@ -191,7 +191,7 @@ export default function transformProps(
             clusterType === 'hierarchical_kmeans' && enableClustering && !isAggMode
               ? 'Cluster'
               : FALLBACK_SERIES_NAME
-          } - ${i}`,
+          } - ${i + 1}`,
           color: colorFn(i),
         });
       }
@@ -200,6 +200,7 @@ export default function transformProps(
         {
           type: 'piecewise',
           top: 'top',
+          right: 0,
           orient: 'horizontal',
           min: 0,
           max: clusterGroups,
