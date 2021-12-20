@@ -17,7 +17,7 @@
  * under the License.
  */
 import React from 'react';
-import { ensureIsArray, QueryFormColumn, QueryMode, t } from '@superset-ui/core';
+import { QueryFormColumn, QueryMode, t } from '@superset-ui/core';
 import {
   ControlConfig,
   ControlPanelConfig,
@@ -64,7 +64,17 @@ const queryMode: ControlConfig<'RadioButtonControl'> = {
     [QueryMode.raw, QueryModeLabel[QueryMode.raw]],
   ],
   mapStateToProps: ({ controls }) => ({ value: getQueryMode(controls) }),
-  rerender: ['x', 'y', 'x_raw', 'y_raw', 'size', 'size_raw', 'cluster_entity', 'enable_clustering'],
+  rerender: [
+    'x',
+    'y',
+    'x_raw',
+    'y_raw',
+    'size',
+    'size_raw',
+    'cluster_entity',
+    'cluster_type',
+    'enable_clustering',
+  ],
 };
 
 function isQueryMode(mode: QueryMode) {
@@ -80,18 +90,33 @@ const isAggMode = isQueryMode(QueryMode.aggregate);
 const isRawMode = isQueryMode(QueryMode.raw);
 
 const validateAggControlValues = (controls: ControlStateMapping, values: any[]) => {
-  const areControlsEmpty = values.every(val => ensureIsArray(val).length === 0);
+  const areControlsEmpty = values.some(
+    v => v === null || typeof v === 'undefined' || v === '' || (Array.isArray(v) && v.length === 0),
+  );
   return areControlsEmpty && isAggMode({ controls })
     ? [t('X and Y Metrics must have a value')]
     : [];
 };
 
 const validateRawControlValues = (controls: ControlStateMapping, values: any[]) => {
-  const areControlsEmpty = values.every(val => ensureIsArray(val).length === 0);
+  const areControlsEmpty = values.some(
+    v => v === null || typeof v === 'undefined' || v === '' || (Array.isArray(v) && v.length === 0),
+  );
   return areControlsEmpty && isRawMode({ controls })
     ? [t('X and Y Metrics must have a value')]
     : [];
 };
+
+const validateRawEntityControlValues = (controls: ControlStateMapping) =>
+  controls.cluster_type?.value === 'cluster_by_entity' &&
+  isRawMode({ controls }) &&
+  controls.enable_clustering?.value === true &&
+  (controls.cluster_entity?.value === null ||
+    typeof controls.cluster_entity?.value === 'undefined' ||
+    controls.cluster_entity?.value === '' ||
+    (Array.isArray(controls.cluster_entity?.value) && controls.cluster_entity?.value.length === 0))
+    ? [t('Entity must have a value')]
+    : [];
 
 const xAxisControls = [
   [<h1 className="section-header">{t('X Axis')}</h1>],
@@ -244,6 +269,17 @@ const clusteringSection = [
         default: useClustering,
         description: t('Whether to enable clustering'),
         visibility: isRawMode,
+        rerender: [
+          'x',
+          'y',
+          'x_raw',
+          'y_raw',
+          'size',
+          'size_raw',
+          'cluster_entity',
+          'cluster_type',
+          'enable_clustering',
+        ],
       },
     },
   ],
@@ -260,6 +296,17 @@ const clusteringSection = [
         ]),
         visibility: ({ controls }: ControlPanelsContainerProps) =>
           Boolean(controls?.enable_clustering?.value) && isRawMode({ controls }),
+        rerender: [
+          'x',
+          'y',
+          'x_raw',
+          'y_raw',
+          'size',
+          'size_raw',
+          'cluster_entity',
+          'cluster_type',
+          'enable_clustering',
+        ],
       },
     },
   ],
@@ -268,6 +315,30 @@ const clusteringSection = [
       name: `cluster_entity`,
       config: {
         ...optionalEntity,
+        mapStateToProps: (
+          state: ControlPanelState,
+          controlState: ControlState,
+          dic: Record<string, any> | undefined,
+        ) => {
+          const { controls } = state;
+          const originalMapStateToProps = sharedControls?.entity?.mapStateToProps;
+          // @ts-ignore
+          const newState = originalMapStateToProps?.(state, controlState, dic) || {};
+          newState.externalValidationErrors = validateRawEntityControlValues(controls);
+
+          return newState;
+        },
+        rerender: [
+          'x',
+          'y',
+          'x_raw',
+          'y_raw',
+          'size',
+          'size_raw',
+          'cluster_entity',
+          'cluster_type',
+          'enable_clustering',
+        ],
         visibility: ({ controls }: ControlPanelsContainerProps) =>
           Boolean(controls?.enable_clustering?.value) &&
           Boolean(controls?.cluster_type?.value === 'cluster_by_entity') &&
@@ -315,17 +386,33 @@ const config: ControlPanelConfig = {
               description: t('X Axis Column'),
               visibility: isRawMode,
               validators: [],
-              mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
+              mapStateToProps: (
+                state: ControlPanelState,
+                controlState: ControlState,
+                dic: Record<string, any> | undefined,
+              ) => {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.entity?.mapStateToProps;
                 // @ts-ignore
-                const newState = originalMapStateToProps?.(state, controlState) || {};
+                const newState = originalMapStateToProps?.(state, controlState, dic) || {};
                 newState.externalValidationErrors = validateRawControlValues(controls, [
                   controls.x_raw?.value,
+                  controls.y_raw?.value,
                 ]);
 
                 return newState;
               },
+              rerender: [
+                'x',
+                'y',
+                'x_raw',
+                'y_raw',
+                'size',
+                'size_raw',
+                'cluster_entity',
+                'cluster_type',
+                'enable_clustering',
+              ],
             },
           },
           {
@@ -334,17 +421,34 @@ const config: ControlPanelConfig = {
               ...sharedControls.x,
               visibility: isAggMode,
               validators: [],
-              mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
+              mapStateToProps: (
+                state: ControlPanelState,
+                controlState: ControlState,
+                dic: Record<string, any> | undefined,
+              ) => {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.x?.mapStateToProps;
                 // @ts-ignore
-                const newState = originalMapStateToProps?.(state, controlState) || {};
+                const newState = originalMapStateToProps?.(state, controlState, dic) || {};
+                // newState.externalValidationErrors = validation;
                 newState.externalValidationErrors = validateAggControlValues(controls, [
                   controls.x?.value,
+                  controls.y?.value,
                 ]);
 
                 return newState;
               },
+              rerender: [
+                'x',
+                'y',
+                'x_raw',
+                'y_raw',
+                'size',
+                'size_raw',
+                'cluster_entity',
+                'cluster_type',
+                'enable_clustering',
+              ],
             },
           },
         ],
@@ -357,17 +461,33 @@ const config: ControlPanelConfig = {
               description: t('Y Axis Column'),
               visibility: isRawMode,
               validators: [],
-              mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
+              mapStateToProps: (
+                state: ControlPanelState,
+                controlState: ControlState,
+                dic: Record<string, any> | undefined,
+              ) => {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.entity?.mapStateToProps;
                 // @ts-ignore
-                const newState = originalMapStateToProps?.(state, controlState) || {};
+                const newState = originalMapStateToProps?.(state, controlState, dic) || {};
                 newState.externalValidationErrors = validateRawControlValues(controls, [
+                  controls.x_raw?.value,
                   controls.y_raw?.value,
                 ]);
 
                 return newState;
               },
+              rerender: [
+                'x',
+                'y',
+                'x_raw',
+                'y_raw',
+                'size',
+                'size_raw',
+                'cluster_entity',
+                'cluster_type',
+                'enable_clustering',
+              ],
             },
           },
           {
@@ -376,17 +496,33 @@ const config: ControlPanelConfig = {
               ...sharedControls.y,
               visibility: isAggMode,
               validators: [],
-              mapStateToProps: (state: ControlPanelState, controlState: ControlState) => {
+              mapStateToProps: (
+                state: ControlPanelState,
+                controlState: ControlState,
+                dic: Record<string, any> | undefined,
+              ) => {
                 const { controls } = state;
                 const originalMapStateToProps = sharedControls?.y?.mapStateToProps;
                 // @ts-ignore
-                const newState = originalMapStateToProps?.(state, controlState) || {};
+                const newState = originalMapStateToProps?.(state, controlState, dic) || {};
                 newState.externalValidationErrors = validateAggControlValues(controls, [
                   controls.y?.value,
+                  controls.x?.value,
                 ]);
 
                 return newState;
               },
+              rerender: [
+                'x',
+                'y',
+                'x_raw',
+                'y_raw',
+                'size',
+                'size_raw',
+                'cluster_entity',
+                'cluster_type',
+                'enable_clustering',
+              ],
             },
           },
         ],
