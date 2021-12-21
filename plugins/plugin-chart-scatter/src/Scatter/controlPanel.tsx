@@ -55,6 +55,18 @@ const optionalEntity = {
   validators: [],
 };
 
+const scatterRerender = [
+  'x',
+  'y',
+  'x_raw',
+  'y_raw',
+  'size',
+  'size_raw',
+  'cluster_entity',
+  'cluster_type',
+  'enable_clustering',
+];
+
 const queryMode: ControlConfig<'RadioButtonControl'> = {
   type: 'RadioButtonControl',
   label: t('Query mode'),
@@ -64,17 +76,7 @@ const queryMode: ControlConfig<'RadioButtonControl'> = {
     [QueryMode.raw, QueryModeLabel[QueryMode.raw]],
   ],
   mapStateToProps: ({ controls }) => ({ value: getQueryMode(controls) }),
-  rerender: [
-    'x',
-    'y',
-    'x_raw',
-    'y_raw',
-    'size',
-    'size_raw',
-    'cluster_entity',
-    'cluster_type',
-    'enable_clustering',
-  ],
+  rerender: scatterRerender,
 };
 
 function isQueryMode(mode: QueryMode) {
@@ -269,17 +271,7 @@ const clusteringSection = [
         default: useClustering,
         description: t('Whether to enable clustering'),
         visibility: isRawMode,
-        rerender: [
-          'x',
-          'y',
-          'x_raw',
-          'y_raw',
-          'size',
-          'size_raw',
-          'cluster_entity',
-          'cluster_type',
-          'enable_clustering',
-        ],
+        rerender: scatterRerender,
       },
     },
   ],
@@ -296,17 +288,7 @@ const clusteringSection = [
         ]),
         visibility: ({ controls }: ControlPanelsContainerProps) =>
           Boolean(controls?.enable_clustering?.value) && isRawMode({ controls }),
-        rerender: [
-          'x',
-          'y',
-          'x_raw',
-          'y_raw',
-          'size',
-          'size_raw',
-          'cluster_entity',
-          'cluster_type',
-          'enable_clustering',
-        ],
+        rerender: scatterRerender,
       },
     },
   ],
@@ -328,17 +310,7 @@ const clusteringSection = [
 
           return newState;
         },
-        rerender: [
-          'x',
-          'y',
-          'x_raw',
-          'y_raw',
-          'size',
-          'size_raw',
-          'cluster_entity',
-          'cluster_type',
-          'enable_clustering',
-        ],
+        rerender: scatterRerender,
         visibility: ({ controls }: ControlPanelsContainerProps) =>
           Boolean(controls?.enable_clustering?.value) &&
           Boolean(controls?.cluster_type?.value === 'cluster_by_entity') &&
@@ -402,17 +374,7 @@ const config: ControlPanelConfig = {
 
                 return newState;
               },
-              rerender: [
-                'x',
-                'y',
-                'x_raw',
-                'y_raw',
-                'size',
-                'size_raw',
-                'cluster_entity',
-                'cluster_type',
-                'enable_clustering',
-              ],
+              rerender: scatterRerender,
             },
           },
           {
@@ -438,17 +400,7 @@ const config: ControlPanelConfig = {
 
                 return newState;
               },
-              rerender: [
-                'x',
-                'y',
-                'x_raw',
-                'y_raw',
-                'size',
-                'size_raw',
-                'cluster_entity',
-                'cluster_type',
-                'enable_clustering',
-              ],
+              rerender: scatterRerender,
             },
           },
         ],
@@ -477,17 +429,7 @@ const config: ControlPanelConfig = {
 
                 return newState;
               },
-              rerender: [
-                'x',
-                'y',
-                'x_raw',
-                'y_raw',
-                'size',
-                'size_raw',
-                'cluster_entity',
-                'cluster_type',
-                'enable_clustering',
-              ],
+              rerender: scatterRerender,
             },
           },
           {
@@ -512,17 +454,7 @@ const config: ControlPanelConfig = {
 
                 return newState;
               },
-              rerender: [
-                'x',
-                'y',
-                'x_raw',
-                'y_raw',
-                'size',
-                'size_raw',
-                'cluster_entity',
-                'cluster_type',
-                'enable_clustering',
-              ],
+              rerender: scatterRerender,
             },
           },
         ],
